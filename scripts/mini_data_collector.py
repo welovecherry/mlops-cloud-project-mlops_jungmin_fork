@@ -37,6 +37,12 @@ NX = "98"  # 부산광역시청 좌표 예시로 사용함
 NY = "76"  
 CSV_FILE_PATH = './data/collected_weather_data.csv' # 프로젝트 루트의 data 폴더 기준
 
+# API_KEY가 로드되었는지 확인
+if not API_KEY:
+    print("error: API_KEY가 설정되지 않았습니다.")
+else:
+    print("API_KEY가 성공적으로 로드되었습니다.") # 확인용 로그
+
 def get_weather_data(base_datetime_param, data_type): # 파라미터 이름을 base_datetime_param으로 변경
             """
             기상청 API에서 초단기실황 또는 초단기예보 데이터를 가져옵니다.
