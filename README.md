@@ -1,38 +1,82 @@
-#  mini_data_collector.py 코드 흐름
+# 프로젝트 이름
 
-1. 현재 시간의 날씨 실황 데이터를 기상청 API에서 받아오고  
-2. 그와 짝을 이루는 1시간 뒤 예보 기온도 받아서  
-3. 현재 → 미래로 이어지는 한 쌍의 학습 데이터를 만든 뒤  
-4. CSV 파일에 저장해서 머신러닝 학습에 쓸 수 있게 쌓아두는 스크립트  
+<br>
 
-테스트 용으로 3시간 동안 1시간 간격으로 3번 실행(지금은 5초로 단축)해서 데이터 몇 줄이라도 모으자!
+## 💻 프로젝트 소개
+### <프로젝트 소개>
+- _이번 프로젝트에 대해 소개를 작성해주세요_
 
----
+### <작품 소개>
+- _만드신 작품에 대해 간단한 소개를 작성해주세요_
 
-# API의 활용 흐름
+<br>
 
-1. 사용자 요청 (현재 날씨 정보) → API 서버 (src/main.py)  
-2. API 서버 (src/main.py) → 모델 로직 (src/model.py)에 예측 요청 (현재 날씨 정보 전달)  
-3. 모델 로직 (src/model.py) → 저장된 LinearRegression 모델 (*.pkl 파일)을 사용해 1시간 뒤 기온 예측  
-4. 모델 로직 (src/model.py) → API 서버 (src/main.py)에 예측 결과 전달  
-5. API 서버 (src/main.py) → 예측 결과 + 옷차림 추천 규칙 적용 → 사용자에게 최종 응답 (JSON)
+## 👨‍👩‍👦‍👦 팀 구성원
 
----
+| ![박패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![이패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![최패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![김패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![오패캠](https://avatars.githubusercontent.com/u/156163982?v=4) |
+| :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: |
+|            [박패캠](https://github.com/UpstageAILab)             |            [이패캠](https://github.com/UpstageAILab)             |            [최패캠](https://github.com/UpstageAILab)             |            [김패캠](https://github.com/UpstageAILab)             |            [오패캠](https://github.com/UpstageAILab)             |
+|                            팀장, 담당 역할                             |                            담당 역할                             |                            담당 역할                             |                            담당 역할                             |                            담당 역할                             |
 
-#  구현한 컴포넌트 총정리 (초간단 버전)
+<br>
 
-1. Source code / source repository (GitHub)  
-2. Automated data pipeline (기상청 API를 호출해서 데이터 수집)  
-3. Model registry (pickle)  
-4. CD (fast API, prediction service)
+## 🔨 개발 환경 및 기술 스택
+- 주 언어 : _ex) python_
+- 버전 및 이슈관리 : _ex) github_
+- 협업 툴 : _ex) github, notion_
 
----
+<br>
 
-# 앞으로 시도해볼만한 컴포넌트
+## 📁 프로젝트 구조
+```
+├── code
+│   ├── jupyter_notebooks
+│   │   └── model_train.ipynb
+│   └── train.py
+├── docs
+│   ├── pdf
+│   │   └── (Template) [패스트캠퍼스] Upstage AI Lab 1기_그룹 스터디 .pptx
+│   └── paper
+└── input
+    └── data
+        ├── eval
+        └── train
+```
 
-1. CI (코드 품질 검사, 테스트 자동화)  
-2. Data anaytics (수집된 데이터 분석)  
-3. GitHub Actions (자동화된 배포 파이프라인)  
-4. Model monitoring (모델 성능 모니터링)  
-5. Airflow (데이터 파이프라인)  
-6. Jira (프로젝트 관리)
+<br>
+
+## 💻​ 구현 기능
+### 기능1
+- _작품에 대한 주요 기능을 작성해주세요_
+### 기능2
+- _작품에 대한 주요 기능을 작성해주세요_
+### 기능3
+- _작품에 대한 주요 기능을 작성해주세요_
+
+<br>
+
+## 🛠️ 작품 아키텍처(필수X)
+- #### _아래 이미지는 예시입니다_
+![이미지 설명](https://miro.medium.com/v2/resize:fit:4800/format:webp/1*ub_u88a4MB5Uj-9Eb60VNA.jpeg)
+
+<br>
+
+## 🚨​ 트러블 슈팅
+### 1. OOO 에러 발견
+
+#### 설명
+- _프로젝트 진행 중 발생한 트러블에 대해 작성해주세요_
+
+#### 해결
+- _프로젝트 진행 중 발생한 트러블 해결방법 대해 작성해주세요_
+
+<br>
+
+## 📌 프로젝트 회고
+### 박패캠
+- _프로젝트 회고를 작성해주세요_
+
+<br>
+
+## 📰​ 참고자료
+- _참고자료를 첨부해주세요_
