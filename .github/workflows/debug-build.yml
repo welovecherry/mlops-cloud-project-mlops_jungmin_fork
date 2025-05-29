@@ -1,0 +1,45 @@
+name: Debug Docker Build Workflow
+
+on:
+  push:
+    branches: [ jungmin ]
+
+jobs:
+  debug_file_structure_and_build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 코드 체크아웃: 저장소의 코드를 가져옴
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 작업 공간 파일 목록 상세 출력 
+      - name: List files in workspace for DEBUG
+        run: |
+          echo "--- Repository Root Contents (현재 작업 디렉토리) ---"
+          ls -la
+          echo 
+
+          echo "--- 'mlops_team' Directory Contents (mlops_team 폴더 내용) ---"
+          if [ -d "mlops_team" ]; then # mlops_team 폴더가 있는지 먼저 확인
+            ls -la ./mlops_team
+          else
+            echo "'mlops_team' directory NOT FOUND at the root."
+          fi
+          echo 
+
+          echo "--- Finding 'Dockerfile' anywhere in the project (Dockerfile 찾기) ---"
+          find . -name "Dockerfile" -ls
+          echo 
+
+          echo "--- Finding 'requirements.txt' anywhere in the project (requirements.txt 찾기) ---"
+          find . -name "requirements.txt" -ls
+
+      # 3. (일단 주석 처리) Docker 이미지 빌드 시도 - 위 로그 확인 후 주석 해제 예정
+      # - name: Attempt to Build Docker image
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./mlops_team
+      #     file: ./mlops_team/Dockerfile # 저장소 루트 기준 Dockerfile 경로
+      #     push: false
+      #     tags: welovecherry/weather-api:debug-test
