@@ -25,7 +25,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./mlops_team/Dockerfile
           push: false # 일단 한번 로컬에서 빌드 해보고 나중에 true로 바꾸자. 그때 태그도 바꿔야될듯
           # push: true
           # tags: welovecherry/weather-api:240528-v1
