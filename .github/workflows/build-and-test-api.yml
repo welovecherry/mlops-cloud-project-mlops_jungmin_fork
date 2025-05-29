@@ -37,6 +37,7 @@ jobs:
 
           echo "--- Finding 'requirements.txt' anywhere in the project (requirements.txt 찾기) ---"
           find . -name "requirements.txt" -ls
+          echo
 
       # 2.2 도커 허브 로그인 (추가함)
       - name: Login to Docker Hub
