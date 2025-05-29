@@ -16,6 +16,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: List files in workspace
+        run: |
+          echo "디버깅용: 현재 작업 디렉토리 (루트):"
+          ls -la
+          echo "디버깅용: --- mlops_team 디렉토리 내용: ---"
+          ls -la ./mlops_team
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
