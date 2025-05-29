@@ -35,11 +35,11 @@ jobs:
           echo "--- Finding 'requirements.txt' anywhere in the project (requirements.txt 찾기) ---"
           find . -name "requirements.txt" -ls
 
-      # 3. (일단 주석 처리) Docker 이미지 빌드 시도 - 위 로그 확인 후 주석 해제 예정
-      # - name: Attempt to Build Docker image
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: ./mlops_team
-      #     file: ./mlops_team/Dockerfile # 저장소 루트 기준 Dockerfile 경로
-      #     push: false
-      #     tags: welovecherry/weather-api:debug-test
+      # 3. Docker 이미지 빌드 시도
+      - name: Attempt to Build Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./mlops_team
+          file: ./mlops_team/Dockerfile # 저장소 루트 기준 Dockerfile 경로
+          push: false
+          tags: welovecherry/weather-api:debug-test
