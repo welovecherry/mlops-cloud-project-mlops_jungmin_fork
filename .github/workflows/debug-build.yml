@@ -53,7 +53,7 @@ jobs:
       
       - name: Perform smoke tests
         run: |
-          echo "Running smoke tests...
+          echo "Running smoke tests..."
           curl -f http://localhost:8000/
           curl -f http://localhost:8000/docs
       
