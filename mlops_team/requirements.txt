@@ -2,3 +2,8 @@ fastapi
 uvicorn[standard]
 pandas
 scikit-learn
+
+# S3 사용을 위해 추가한 패키지들 (5월30일 추가함)
+python-dotenv 
+s3fs 
+pyarrow 
