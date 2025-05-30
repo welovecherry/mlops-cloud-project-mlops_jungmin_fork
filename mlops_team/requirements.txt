@@ -12,3 +12,4 @@ xgboost
 catboost
 numpy
 mlflow
+scipy
