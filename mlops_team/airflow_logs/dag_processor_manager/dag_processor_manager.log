@@ -23052,3 +23052,227 @@ File Path                                 PID    Runtime      # DAGs    # Errors
 /opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:08:45
 /opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:08:46
 ================================================================================
+[2025-05-31T00:09:46.056+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.54s           2025-05-31T00:09:46
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:09:17
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:09:16
+================================================================================
+[2025-05-31T00:10:16.782+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.64s           2025-05-31T00:10:16
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:09:48
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:09:47
+================================================================================
+[2025-05-31T00:10:46.767+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.64s           2025-05-31T00:10:16
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:10:17
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:10:19
+================================================================================
+[2025-05-31T00:11:16.834+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.64s           2025-05-31T00:10:47
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:10:49
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:10:48
+================================================================================
+[2025-05-31T00:11:34.385+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/dags
+[2025-05-31T00:11:34.400+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/dags
+[2025-05-31T00:11:46.923+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.54s           2025-05-31T00:11:18
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:11:19
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.10s           2025-05-31T00:11:20
+================================================================================
+[2025-05-31T00:12:17.022+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.54s           2025-05-31T00:11:48
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:11:50
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:11:51
+================================================================================
+[2025-05-31T00:12:47.116+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.55s           2025-05-31T00:12:19
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:12:21
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.10s           2025-05-31T00:12:20
+================================================================================
+[2025-05-31T00:13:17.196+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.53s           2025-05-31T00:12:50
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.10s           2025-05-31T00:12:52
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.10s           2025-05-31T00:12:51
+================================================================================
+[2025-05-31T00:13:47.274+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.53s           2025-05-31T00:13:20
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:13:21
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:13:23
+================================================================================
+[2025-05-31T00:14:17.347+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.42s           2025-05-31T00:13:51
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:13:53
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.10s           2025-05-31T00:13:52
+================================================================================
+[2025-05-31T00:14:47.423+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.53s           2025-05-31T00:14:22
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:14:24
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:14:23
+================================================================================
+[2025-05-31T00:15:17.499+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.42s           2025-05-31T00:14:52
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:14:53
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:14:54
+================================================================================
+[2025-05-31T00:15:47.568+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.32s           2025-05-31T00:15:23
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:15:24
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:15:25
+================================================================================
+[2025-05-31T00:16:17.651+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.51s           2025-05-31T00:15:53
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:15:56
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:15:54
+================================================================================
+[2025-05-31T00:16:35.361+0000] {manager.py:737} INFO - Searching for files in /opt/airflow/dags
+[2025-05-31T00:16:35.370+0000] {manager.py:740} INFO - There are 3 files in /opt/airflow/dags
+[2025-05-31T00:16:47.728+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.42s           2025-05-31T00:16:24
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:16:25
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:16:26
+================================================================================
+[2025-05-31T00:17:17.820+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.32s           2025-05-31T00:16:54
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:16:55
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:16:56
+================================================================================
+[2025-05-31T00:17:47.908+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.52s           2025-05-31T00:17:25
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:17:26
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:17:27
+================================================================================
+[2025-05-31T00:18:17.998+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.43s           2025-05-31T00:17:55
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:17:57
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:17:58
+================================================================================
+[2025-05-31T00:18:48.086+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.52s           2025-05-31T00:18:26
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:18:27
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:18:28
+================================================================================
+[2025-05-31T00:19:18.170+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.31s           2025-05-31T00:18:56
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:18:58
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:18:59
+================================================================================
+[2025-05-31T00:19:48.254+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.63s           2025-05-31T00:19:27
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:19:28
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:19:30
+================================================================================
+[2025-05-31T00:20:18.339+0000] {manager.py:878} INFO - 
+================================================================================
+DAG File Processing Stats
+
+File Path                                 PID    Runtime      # DAGs    # Errors  Last Runtime    Last Run
+----------------------------------------  -----  ---------  --------  ----------  --------------  -------------------
+/opt/airflow/dags/s3_parquet_read_dag.py                           1           0  0.53s           2025-05-31T00:19:58
+/opt/airflow/dags/s3_upload_test_dag.py                            1           0  0.11s           2025-05-31T00:19:59
+/opt/airflow/dags/my_first_dag.py                                  1           0  0.11s           2025-05-31T00:20:00
+================================================================================
