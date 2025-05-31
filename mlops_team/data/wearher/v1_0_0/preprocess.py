@@ -8,7 +8,7 @@ import pandas as pd
 from datetime import datetime, timedelta
 import s3fs
 from tqdm import tqdm
-
+from utils.constants import LOOKBACK_DAYS
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -20,9 +20,7 @@ logger.info("This will be printed in terminal")
 
 
 S3_BUCKET_NAME = os.getenv('S3_BUCKET_NAME')
-from data.preprocess import Preprocess
-
-class WeatherPreprocess(Preprocess):
+class WeatherPreprocess:
     def __init__(self):
         super().__init__()
         self.preprocess_version = "v1.0.0"
@@ -43,19 +41,13 @@ class WeatherPreprocess(Preprocess):
         
         # 현재 날짜 기준으로 검색
         current_date = datetime.now()
-        dt_minus_8000 = current_date - timedelta(days=500)
-        
-        # 시작일과 종료일의 년도와 월을 기준으로 검색
-        start_year = dt_minus_8000.year
-        start_month = dt_minus_8000.month
-        end_year = current_date.year
-        end_month = current_date.month
+        dt_minus = current_date - timedelta(days=LOOKBACK_DAYS)
         
         # 날짜 범위 생성
-        date_range = pd.date_range(start=dt_minus_8000, end=current_date, freq='D')
+        date_range = pd.date_range(start=dt_minus, end=current_date, freq='D')
         
         print("날씨 데이터 로드 중...")
-        print(f"검색 기간: {dt_minus_8000.strftime('%Y-%m-%d')} ~ {current_date.strftime('%Y-%m-%d')}")
+        print(f"검색 기간: {dt_minus.strftime('%Y-%m-%d')} ~ {current_date.strftime('%Y-%m-%d')}")
         
         dfs = []
         for date in tqdm(date_range, desc="날짜별 데이터 로드 중"):

@@ -1,18 +1,10 @@
 import os
-from utils.utils import project_path
-
-# 데이터베이스 경로
-DB_DIR = os.path.join(project_path(), 'data')
-WEATHER_DB_PATH = os.path.join(DB_DIR, 'raw/raw_weather.duckdb')
-PROPROCESSED_DB_PATH = os.path.join(DB_DIR, 'preprocessed/preprocessed_weather.duckdb')
-FEATURE_DB_PATH = os.path.join(DB_DIR, 'features/weather_features.duckdb')
 
 # API 관련 상수
 KMA_STATION_ID = 108
 KMA_API_URL = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php'
 
 # 데이터 처리 관련 상수
-BATCH_DAYS = 14
 LOOKBACK_DAYS = 30  # 피처 생성 시 참조할 과거 데이터 기간
 
 # 날씨 데이터 컬럼

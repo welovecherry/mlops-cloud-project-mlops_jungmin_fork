@@ -15,7 +15,6 @@ sys.path.append(
 from utils.constants import (
     KMA_STATION_ID,
     KMA_API_URL,
-    BATCH_DAYS,
     WEATHER_COLUMNS,
     WEATHER_KOREAN_COLUMNS
 )
@@ -125,7 +124,7 @@ def save_to_s3(df: pd.DataFrame, year: int, month: int, day: int):
     데이터프레임을 S3에 저장합니다.
     """
     s3 = s3fs.S3FileSystem()
-    path = f"{S3_BUCKET_NAME}/data/weather/raw/{year:04d}/{month:02d}/{day:02d}/data.parquet"
+    path = f"{S3_BUCKET_NAME}/data/weather/raw/year={year:04d}/month={month:02d}/day={day:02d}/data.parquet"
     try:
         df.to_parquet(path, index=False, engine='pyarrow', filesystem=s3)
     except Exception as e:
