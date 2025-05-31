@@ -32,11 +32,12 @@ class Feature_Engineering:
     def load_data_from_s3(self, year, month, day):
         """S3에서 parquet 파일을 로드"""
         try:
-            path = f"{self.s3_bucket}/data/weather/raw/{year}/{month}/{day}/data.parquet"
+            path = f"{self.s3_bucket}/data/weather/preprocess/v1.0.0/2025.04.30_0000_2025.05.29_1200.parquet"
             logger.info(f"Loading data from S3: {path}")
             
             self.df = pd.read_parquet(path, filesystem=self.s3)
             logger.info(f"Data loaded successfully. Shape: {self.df.shape}")
+            logger.info(f"Columns in the dataset: {self.df.columns.tolist()}")
             return self.df
             
         except Exception as e:
@@ -141,13 +142,21 @@ class Feature_Engineering:
         exclude_cols = ['WeatherCode', 'StationID', 'ObservationTime'] # 필요 없는 변수
         drop_cols = spearman_over_05 + corr_over_95 + kruskal_over_05 + exclude_cols # 최종 제거 변수
 
-        for col in drop_cols:
-            if col == 'day':
+        # year, month, day, hour 컬럼은 제거하지 않음
+        for col in ['year', 'month', 'day', 'hour']:
+            if col in drop_cols:
                 drop_cols.remove(col)
 
+        # 실제로 존재하는 컬럼만 제거
+        drop_cols = [col for col in drop_cols if col in self.df.columns]
         self.df = self.df.drop(columns=drop_cols) # 최종 제거
+
+        # order_cols 중 실제로 존재하는 컬럼만 사용
         order_cols = ['year', 'month', 'day', 'hour', 'Temperature']
-        self.df = self.df[order_cols + [c for c in self.df.columns if c not in order_cols]] # 순서 재배치
+        existing_order_cols = [col for col in order_cols if col in self.df.columns]
+        remaining_cols = [col for col in self.df.columns if col not in existing_order_cols]
+        
+        self.df = self.df[existing_order_cols + remaining_cols] # 순서 재배치
         return self.df
 
 
@@ -187,33 +196,3 @@ class Feature_Engineering:
 
         return self.df
     
-
-def main():
-    try:
-        # Feature_Engineering 인스턴스 생성
-        fe = Feature_Engineering()
-        
-        # 테스트용 데이터 로드 (예: 2022년 21월 01일 데이터)
-        df = fe.load_data_from_s3(year='2022', month='21', day='01')
-        
-        # 전처리 파이프라인 실행
-        df = fe.missing_value()  # 1. 결측치 처리
-        df = fe.feature_selection('Temperature')  # 2. 특성 선택
-        df = fe.add_season_feature()  # 3. 계절 변수 추가
-        df = fe.encoding()  # 4. 인코딩
-        df = fe.target_temp()  # 5. 타겟 변수 생성
-        
-        # 전처리된 데이터를 S3에 저장
-        path = fe.save_to_s3(df, version='v1.0.0')
-        
-        logger.info("Feature engineering pipeline completed")
-        logger.info(f"Processed data saved at: {path}")
-        
-    except Exception as e:
-        logger.error(f"Pipeline error: {str(e)}")
-        raise
-
-if __name__ == "__main__":
-    main()
-    
-
