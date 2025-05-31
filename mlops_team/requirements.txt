@@ -13,3 +13,5 @@ catboost
 numpy
 mlflow
 scipy
+
+tqdm
