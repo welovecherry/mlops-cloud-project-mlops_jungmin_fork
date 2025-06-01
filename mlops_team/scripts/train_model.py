@@ -14,7 +14,7 @@ from xgboost import XGBRegressor
 from catboost import CatBoostRegressor
 import argparse
 import tempfile
-
+import s3fs
 
 class Tree_Models:
     def __init__(self, data_path: str, experiment_name: str = "weather_regression"):
@@ -44,7 +44,12 @@ class Tree_Models:
     def load_data(self) -> Tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
         """데이터를 로드하고 전처리합니다."""
         # 데이터 로드
-        df = pd.read_csv(self.data_path)
+        _, ext = os.path.splitext(self.data_path)
+        if ext.lower() == '.csv':
+            df = pd.read_csv(self.data_path)
+        else:
+            s3 = s3fs.S3FileSystem()
+            df = pd.read_parquet(self.data_path, filesystem=s3)
         
         # 시계열 정렬
         df = df.sort_values(by=['year', 'month', 'day', 'hour'])
