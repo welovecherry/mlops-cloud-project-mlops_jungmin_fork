@@ -5,6 +5,7 @@ WORKDIR /mlops_team
 COPY requirements.txt /mlops_team/requirements.txt
 
 RUN apt-get update && apt-get install -y libgomp1
+RUN apt-get update && apt-get install -y libomp-dev
 RUN pip install --no-cache-dir -r /mlops_team/requirements.txt
 
 COPY . /mlops_team/
