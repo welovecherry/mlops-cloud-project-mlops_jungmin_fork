@@ -1,14 +1,9 @@
 import os
-import sys
-sys.path.append(
-    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-)
-
 import pandas as pd
 from datetime import datetime, timedelta
 import s3fs
 from tqdm import tqdm
-from utils.constants import LOOKBACK_DAYS
+from data.utils.constants import LOOKBACK_DAYS
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -29,10 +24,7 @@ class WeatherPreprocess:
     def preprocess_data(self):
         """날씨 데이터 전처리 메인 메서드"""
         df = self.load()
-        df = self.handle_missing_values(df)
-        df = self.remove_outliers(df)
         df = self.convert_data_types(df)
-        df = self.normalize(df)
         self.save(df)
 
     def load(self):
@@ -55,7 +47,7 @@ class WeatherPreprocess:
             month = date.month
             day = date.day
             
-            file_path = f"{S3_BUCKET_NAME}/data/weather/raw/{year}/{month:02d}/{day:02d}/data.parquet"
+            file_path = f"{S3_BUCKET_NAME}/data/weather/raw/year={year}/month={month:02d}/day={day:02d}/data.parquet"
             try:
                 if s3.exists(file_path):
                     df = pd.read_parquet(file_path, filesystem=s3)
