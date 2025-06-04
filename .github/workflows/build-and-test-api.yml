@@ -58,6 +58,8 @@ jobs:
           tags: | # github.sha: 깃헙 커밋 해시를 태그로 사용해 버전관리용으로 쓰자
             welovecherry/weather-api:latest
             welovecherry/weather-api:${{ github.sha }} 
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
         # 4. 빌드 결과 확인
       # - name: Run container from built image for testing
