@@ -92,15 +92,15 @@ jobs:
           docker rm weather-api-test
 
   # 스크립트 실행 병렬로 돌리기
-  run_local_script_job:
-    runs-on: ubuntu-latest
+  # run_local_script_job:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
 
-      - name: Set execute permission for script
-        run: chmod +x ./mlops_team/scripts/build-and-push.sh
+  #     - name: Set execute permission for script
+  #       run: chmod +x ./mlops_team/scripts/build-and-push.sh
 
-      - name: Run local build-and-push.sh script
-        run: ./mlops_team/scripts/build-and-push.sh
+  #     - name: Run local build-and-push.sh script
+  #       run: ./mlops_team/scripts/build-and-push.sh
