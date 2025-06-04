@@ -60,11 +60,21 @@ jobs:
             welovecherry/weather-api:${{ github.sha }} 
 
         # 4. 빌드 결과 확인
+      # - name: Run container from built image for testing
+      #   run: |
+      #     docker run -d -p 8000:8000 --name weather-api-test welovecherry/weather-api:latest
+      #     echo "Waiting for the API to start..."
+      #     sleep 15 
+      # 4. 빌드 결과 확인 더 자세한 로그 추가함
       - name: Run container from built image for testing
         run: |
           docker run -d -p 8000:8000 --name weather-api-test welovecherry/weather-api:latest
           echo "Waiting for the API to start..."
-          sleep 15 
+          sleep 30 # API 시작 시간을 넉넉하게 30초 정도로 늘려보자
+          echo "--- 현재 실행 중인 Docker 컨테이너 목록 (docker ps -a) ---"
+          docker ps -a 
+          echo "--- weather-api-test 컨테이너 로그 (docker logs weather-api-test) ---"
+          docker logs weather-api-test || echo "weather-api-test 컨테이너 로그를 가져오는 데 실패했습니다 (컨테이너가 없을 수 있음)."
       
       # 5. 스모크 테스트
       - name: Perform smoke tests
