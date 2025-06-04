@@ -52,7 +52,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./mlops_team
-          file: ./mlops_team/Dockerfile # 저장소 루트 기준 Dockerfile 경로
+          file: ./mlops_team/Dockerfile.fastapi # 저장소 루트 기준 Dockerfile 경로
           # push: false 
           push: true # 빌드 후 푸시로 수정함
           tags: | # github.sha: 깃헙 커밋 해시를 태그로 사용해 버전관리용으로 쓰자
