@@ -12,11 +12,12 @@ import sys
 sys.path.append(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 )
-from utils.constants import (
+from data.utils.constants import (
     KMA_STATION_ID,
     KMA_API_URL,
     WEATHER_COLUMNS,
-    WEATHER_KOREAN_COLUMNS
+    WEATHER_KOREAN_COLUMNS,
+    LOOKBACK_DAYS,
 )
 
 load_dotenv()
@@ -84,7 +85,7 @@ def generate_date_ranges(start_date: datetime, end_date: datetime) -> list:
     current_start = start_date
 
     while current_start <= end_date:
-        current_end = min(current_start + timedelta(days=BATCH_DAYS), end_date)
+        current_end = min(current_start + timedelta(days=LOOKBACK_DAYS), end_date)
         current_end = current_end.replace(hour=23)
 
         start_str = current_start.strftime('%Y%m%d%H%M')
@@ -151,6 +152,7 @@ def initialize_weather_database():
     
     # 일별로 데이터를 나누어 S3에 저장
     for (year, month, day), group_df in tqdm(combined_data.groupby(['year', 'month', 'day'])):
+        group_df.drop(columns=['year', 'month', 'day'], inplace=True)
         save_to_s3(group_df, year, month, day)
 
 def update_weather_database():
@@ -181,6 +183,7 @@ def update_weather_database():
         
         # 일별로 데이터를 나누어 S3에 저장
         for (year, month, day), group_df in new_data.groupby(['year', 'month', 'day']):
+            group_df.drop(columns=['year', 'month', 'day'], inplace=True)
             save_to_s3(group_df, year, month, day)
 
 def check_s3_path_exists() -> bool:
