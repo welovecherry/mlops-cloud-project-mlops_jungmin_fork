@@ -29,10 +29,14 @@ class Feature_Engineering:
         self.s3 = s3fs.S3FileSystem()
         logger.info("Feature Engineering pipeline initialized")
 
-    def load_data_from_s3(self, year, month, day):
+        # 디버그 위해 추가
+        logger.info(f"Loaded S3_BUCKET_NAME: {os.getenv('S3_BUCKET_NAME')}")
+
         """S3에서 parquet 파일을 로드"""
+    def load_data_from_s3(self, year, month, day):
+        path = f"{self.s3_bucket}/data/weather/preprocess/v1.0.0/2025.04.30_0000_2025.05.29_1200.parquet"
+
         try:
-            path = f"{self.s3_bucket}/data/weather/preprocess/v1.0.0/2025.04.30_0000_2025.05.29_1200.parquet"
             logger.info(f"Loading data from S3: {path}")
             
             self.df = pd.read_parquet(path, filesystem=self.s3)
@@ -135,6 +139,8 @@ class Feature_Engineering:
         return kruskal_cols
 
 
+    # 위에서 사용한 검정을 통해 최종 피쳐 선택
+    # 확인했을 때 최종 선택된 피쳐 수: 34개!!
     def feature_selection(self, target_col):
         spearman_over_05 = self.spearman_test(target_col) # 스피어만 검정에서 유의하지 않은 변수
         corr_over_95 = self.remove_high_corr_target(target_col) # 변수간 상관계수가 0.95 초과인 변수
@@ -184,11 +190,13 @@ class Feature_Engineering:
             self.df = self.df.drop(columns=['CloudType'])
 
         if 'season' in self.df.columns: # 원-핫 인코딩
-            self.df = pd.get_dummies(self.df, columns=['season'], drop_first=False).astype(int)
+            # self.df = pd.get_dummies(self.df, columns=['season'], drop_first=False).astype(int)
+            self.df = pd.get_dummies(self.df, columns=['season'], drop_first=False, dtype=int)
+            # FIXME : 홍정민 수정함. astype(int)에서 'Other'가 int로 변환되지 않아 df 전체를 정수로 형변환하지 않는 방식으로 수정함.
 
         return self.df
 
-
+    # 타겟 변수: 1시간 뒤의 temperature
     def target_temp(self):
         self.df = self.df.sort_values(by=['year', 'month', 'day', 'hour']) # 정렬
         self.df['target_temp'] = self.df['Temperature'].shift(-1)  # 1시간 뒤 온도를 타겟으로

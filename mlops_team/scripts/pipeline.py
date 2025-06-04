@@ -17,7 +17,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-load_dotenv(dotenv_path="/mlops_team/.env")
+load_dotenv(dotenv_path="../.env")
 
 class Pipeline:
     def __init__(self):
@@ -91,10 +91,23 @@ class Pipeline:
             logger.error(f"Error during pipeline execution: {str(e)}")
             return False
 
+# def main():
+#     pipeline = Pipeline()
+#     success = pipeline.run()
+#     sys.exit(0 if success else 1)
+
+# 테스트를 위해서 로그 추가 더 함.
 def main():
+    logger.info("##### Pipeline script execution START #####\n\n") # 전체 시작 로그
     pipeline = Pipeline()
-    success = pipeline.run()
+    success = pipeline.run() # 이 안에서 preprocess(), train()이 순차적으로 실행되며 로그를 남김
+
+    if success:
+        logger.info("##### Pipeline script execution SUCCEEDED #####\n\n") # 전체 성공 로그
+    else:
+        logger.error("##### Pipeline script execution FAILED #####\n\n") # 전체 실패 로그
     sys.exit(0 if success else 1)
+
 
 if __name__ == "__main__":
     main() 
