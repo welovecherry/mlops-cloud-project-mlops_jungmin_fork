@@ -1,5 +1,5 @@
-# CI 파이프라인 구축
-# GitHub Actions를 사용하여 Docker 이미지 빌드 및 테스트
+# GitHub Actions를 사용하여 CI 파이프라인 구축
+# Docker 이미지 자동 빌드, 푸쉬 / 도커허브 연동 / 스모크 테스트
 
 name: Debug Docker Build Workflow
 
@@ -39,12 +39,12 @@ jobs:
           find . -name "requirements.txt" -ls
           echo
 
-      # 2.2 도커 허브 로그인 (추가함)
+      # 2.2 도커 허브 로그인 (Personal Access Token 사용)
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }} 
       
 
       # 3. Docker 이미지 빌드 시도
@@ -52,19 +52,25 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: ./mlops_team
-          file: ./mlops_team/Dockerfile # 저장소 루트 기준 Dockerfile 경로
+          file: ./mlops_team/Dockerfile.fastapi # 저장소 루트 기준 Dockerfile 경로
           # push: false 
           push: true # 빌드 후 푸시로 수정함
           tags: | # github.sha: 깃헙 커밋 해시를 태그로 사용해 버전관리용으로 쓰자
             welovecherry/weather-api:latest
             welovecherry/weather-api:${{ github.sha }} 
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
 
-        # 4. 빌드 결과 확인
+      # 4. 빌드 결과 확인 더 자세한 로그 추가함
       - name: Run container from built image for testing
         run: |
           docker run -d -p 8000:8000 --name weather-api-test welovecherry/weather-api:latest
           echo "Waiting for the API to start..."
-          sleep 15 
+          sleep 30 # API 시작 시간을 넉넉하게 30초 정도로 늘려보자
+          echo "--- 현재 실행 중인 Docker 컨테이너 목록 (docker ps -a) ---"
+          docker ps -a 
+          echo "--- weather-api-test 컨테이너 로그 (docker logs weather-api-test) ---"
+          docker logs weather-api-test || echo "weather-api-test 컨테이너 로그를 가져오는 데 실패했습니다 (컨테이너가 없을 수 있음)."
       
       # 5. 스모크 테스트
       - name: Perform smoke tests
