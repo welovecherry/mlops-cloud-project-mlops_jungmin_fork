@@ -58,15 +58,9 @@ jobs:
           tags: | # github.sha: 깃헙 커밋 해시를 태그로 사용해 버전관리용으로 쓰자
             welovecherry/weather-api:latest
             welovecherry/weather-api:${{ github.sha }} 
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          # cache-from: type=gha
+          # cache-to: type=gha,mode=max
 
-        # 4. 빌드 결과 확인
-      # - name: Run container from built image for testing
-      #   run: |
-      #     docker run -d -p 8000:8000 --name weather-api-test welovecherry/weather-api:latest
-      #     echo "Waiting for the API to start..."
-      #     sleep 15 
       # 4. 빌드 결과 확인 더 자세한 로그 추가함
       - name: Run container from built image for testing
         run: |
@@ -92,17 +86,3 @@ jobs:
           # 중지 및 제거할 컨테이너 이름을 weather-api-test 로 수정
           docker stop weather-api-test
           docker rm weather-api-test
-
-  # 스크립트 실행 병렬로 돌리기
-  # run_local_script_job:
-  #   runs-on: ubuntu-latest
-
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-
-  #     - name: Set execute permission for script
-  #       run: chmod +x ./mlops_team/scripts/build-and-push.sh
-
-  #     - name: Run local build-and-push.sh script
-  #       run: ./mlops_team/scripts/build-and-push.sh
