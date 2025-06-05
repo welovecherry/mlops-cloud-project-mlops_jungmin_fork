@@ -38,6 +38,16 @@ jobs:
           echo "--- Finding 'requirements.txt' anywhere in the project (requirements.txt 찾기) ---"
           find . -name "requirements.txt" -ls
           echo
+      - name: DEBUG echo DockerHub username
+        run: |
+          if [ -z "${{ secrets.DOCKERHUB_USERNAME }}" ]; then
+            echo "❌ DOCKERHUB_USERNAME is empty!\n"
+            exit 1
+          else
+            echo "✅ DOCKERHUB_USERNAME is set.\n"
+          ls -la ./mlops_team
+          fi
+
 
       # 2.2 도커 허브 로그인 (Personal Access Token 사용)
       - name: Login to Docker Hub
@@ -61,6 +71,9 @@ jobs:
           # cache-from: type=gha
           # cache-to: type=gha,mode=max
 
+      # 3.5 슬랙 채널에 "배포 성공" 자동 알람 발송
+
+
       # 4. 빌드 결과 확인 더 자세한 로그 추가함
       - name: Run container from built image for testing
         run: |
@@ -72,6 +85,8 @@ jobs:
           echo "--- weather-api-test 컨테이너 로그 (docker logs weather-api-test) ---"
           docker logs weather-api-test || echo "weather-api-test 컨테이너 로그를 가져오는 데 실패했습니다 (컨테이너가 없을 수 있음)."
       
+
+          
       # 5. 스모크 테스트
       - name: Perform smoke tests
         run: |
