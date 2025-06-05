@@ -1,4 +1,4 @@
-echo "✅ 3번째 시도, GitHub Actions 테스트용. 나중에 삭제하세요~" 
+echo "✅ 4째 시도, GitHub Actions 테스트용. 나중에 삭제하세요~" 
 # 프로젝트 이름
 
 <br>
