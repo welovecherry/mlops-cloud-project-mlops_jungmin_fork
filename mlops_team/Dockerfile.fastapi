@@ -1,14 +1,37 @@
+# FROM python:3.9-slim
+
+# WORKDIR /mlops_team
+
+# COPY requirements.txt /mlops_team/requirements.txt
+
+# RUN apt-get update && apt-get install -y libgomp1
+# RUN apt-get update && apt-get install -y libomp-dev
+# RUN pip install --no-cache-dir -r /mlops_team/requirements.txt
+
+# COPY . /mlops_team/
+
+# # fastapi 기본 포트
+# EXPOSE 8000 
+
+# CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+
 FROM python:3.9-slim
 
-WORKDIR /mlops_team
+WORKDIR /mlops_team # FastAPI는 작업 디렉토리가 /mlops_team 이었네. 이대로 유지하자.
 
-COPY requirements.txt /mlops_team/requirements.txt
+# 수정된 부분: requirements/fastapi.txt 파일을 복사
+# 컨테이너 내 경로도 작업 디렉토리 기준으로 /mlops_team/requirements.txt 로 유지
+COPY mlops_team/requirements/fastapi.txt /mlops_team/requirements.txt
 
-RUN apt-get update && apt-get install -y libgomp1
-RUN apt-get update && apt-get install -y libomp-dev
+RUN apt-get update && apt-get install -y libgomp1 # FastAPI에선 필요 없을 수도 있지만, 일단 유지
+RUN apt-get update && apt-get install -y libomp-dev # FastAPI에선 필요 없을 수도 있지만, 일단 유지
 RUN pip install --no-cache-dir -r /mlops_team/requirements.txt
 
-COPY . /mlops_team/
+COPY . /mlops_team/ 
+# 이 부분은 빌드 컨텍스트가 프로젝트 루트이므로, 프로젝트 전체를 복사함.
+# 만약 FastAPI에 필요한 파일만 복사하고 싶다면 이 부분을 수정해야 할 수도 있어.
+# 예를 들어, COPY mlops_team/src /mlops_team/src 이런 식으로.
 
 # fastapi 기본 포트
 EXPOSE 8000 

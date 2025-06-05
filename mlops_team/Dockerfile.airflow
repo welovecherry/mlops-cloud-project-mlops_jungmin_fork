@@ -1,0 +1,44 @@
+# FROM apache/airflow:2.9.2-python3.9
+
+
+# ENV AIRFLOW_HOME=/opt/airflow
+
+# ENV AIRFLOW__CORE__LOAD_EXAMPLES=false
+
+
+
+# RUN pip install --no-cache-dir \
+#     apache-airflow-providers-docker \
+#     apache-airflow-providers-amazon  # S3 등 AWS 서비스 연동 시 필요
+
+
+# # 로컬의 DAG 파일들을 컨테이너의 DAG 폴더로 복사
+# # 이 Dockerfile과 같은 위치에 dags 폴더가 있고, 그 안에 DAG 파일들이 있다고 가정
+# # (만약 네 DAG 파일들이 ~/airflow/dags에 있다면, 이 부분을 알맞게 수정하거나
+# #  Docker 실행 시 볼륨 마운트를 사용해야 해. 프로젝트 내에 dags 폴더를 만드는 것을 추천)
+# COPY ./dags ${AIRFLOW_HOME}/dags/
+
+# FIXME ==============================
+
+# (선택 사항) requirements.txt 파일로 Airflow 관련 의존성 관리
+# COPY requirements-airflow.txt .
+# RUN pip install --no-cache-dir -r requirements-airflow.txt
+
+# (선택 사항) 필요한 포트 노출 (웹 UI는 보통 8080)
+# EXPOSE 8080
+
+# 베이스 이미지에 보통 entrypoint.sh나 airflow를 실행하는 CMD가 설정되어 있음
+# 로컬 테스트용으로 단일 이미지를 만들 때는 이대로 두고,
+# docker-compose를 사용할 때는 compose 파일에서 webserver, scheduler 등을 각각 실행함.
+
+FROM apache/airflow:2.9.2-python3.9
+
+ENV AIRFLOW_HOME=/opt/airflow
+ENV AIRFLOW__CORE__LOAD_EXAMPLES=false
+
+COPY mlops_team/requirements/airflow.txt /requirements-airflow.txt
+RUN pip install --no-cache-dir -r /requirements-airflow.txt
+
+
+# 수정된 부분: mlops_team/dags/ 폴더를 컨테이너의 DAG 폴더로 복사
+COPY mlops_team/dags ${AIRFLOW_HOME}/dags/

@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+mlflow  # 모델 로딩을 위해 필요 (scikit-learn 등 모델 의존성도 함께 설치될 수 있음)
+pandas  # API에서 입력 데이터 처리 시 필요할 수 있음
+numpy   # pandas 의존성 또는 직접 사용
+boto3   # MLflow가 S3 백엔드 사용 시 또는 직접 S3 접근 시
+s3fs    # MLflow가 S3 백엔드 사용 시 또는 직접 S3 접근 시
+pyarrow # MLflow가 Parquet 아티팩트 사용 시 또는 직접 Parquet 처리 시
+
+# 여기에 FastAPI가 예측을 위해 특정 모델 라이브러리를 직접 로드해야 한다면 추가 (예: lightgbm, xgboost 등)
+# 하지만 보통 mlflow.pyfunc.load_model()이 잘 처리해줌
