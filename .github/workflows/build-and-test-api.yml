@@ -5,7 +5,7 @@ name: Debug Docker Build Workflow
 
 on:
   push:
-    branches: [ main, jungmin ]
+    branches: [ "**" ]
 
 jobs:
   debug_file_structure_and_build:
