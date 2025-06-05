@@ -72,7 +72,12 @@ jobs:
           # cache-to: type=gha,mode=max
 
       # 3.5 슬랙 채널에 "배포 성공" 자동 알람 발송
-
+      - name: Notify Slack on success
+        if: success()
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+            --data '{"text":"✅ Docker 이미지 빌드 및 푸시 성공! 확인해보세요~ https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}' \
+            ${{ secrets.SLACK_WEBHOOK_URL }}
 
       # 4. 빌드 결과 확인 더 자세한 로그 추가함
       - name: Run container from built image for testing
