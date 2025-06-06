@@ -32,7 +32,10 @@ class Feature_Engineering:
     def load_data_from_s3(self, year, month, day):
         """S3에서 parquet 파일을 로드"""
         try:
-            path = f"{self.s3_bucket}/data/weather/preprocess/v1.0.0/2025.04.30_0000_2025.05.29_1200.parquet"
+            # path = f"{self.s3_bucket}/data/weather/preprocess/v1.0.0/2025.04.30_0000_2025.05.29_1200.parquet"
+            s3 = s3fs.S3FileSystem()
+            files = s3.glob(f"{self.s3_bucket}/data/weather/preprocess/v1.0.0/*.parquet")
+            path = max(files)
             logger.info(f"Loading data from S3: {path}")
             
             self.df = pd.read_parquet(path, filesystem=self.s3)
