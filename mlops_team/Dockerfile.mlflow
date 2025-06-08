@@ -4,7 +4,7 @@ RUN pip install mlflow
 RUN mkdir -p /mlflow
 WORKDIR /mlflow
 
-COPY /mlops_team/mlflow.start.sh /mlflow/mlflow.start.sh
+COPY mlflow.start.sh /mlflow/mlflow.start.sh
 RUN chmod +x /mlflow/mlflow.start.sh
 
 CMD ["/mlflow/mlflow.start.sh"]
