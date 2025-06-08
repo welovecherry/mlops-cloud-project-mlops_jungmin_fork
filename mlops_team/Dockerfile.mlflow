@@ -1,0 +1,14 @@
+FROM python:3.9-slim
+
+RUN pip install mlflow
+RUN mkdir -p /mlflow
+WORKDIR /mlflow
+
+COPY mlflow.start.sh /mlflow/mlflow.start.sh
+RUN chmod +x /mlflow/mlflow.start.sh
+
+CMD ["/mlflow/mlflow.start.sh"]
+
+
+# docker build -t mlops-mlflow_server-image -f .\mlops_team\Dockerfile.mlflow .
+# docker run -d --name mlflow_server -p 5001:5000 mlops-mlflow_server-image
