@@ -33,3 +33,6 @@ services:
     container_name: fastapi
     ports:
       - "8000:8000"
+
+
+# docker-compose -f .\mlops_team\docker-compose.yml up --build
