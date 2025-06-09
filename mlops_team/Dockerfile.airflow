@@ -1,19 +1,22 @@
 FROM python:3.8-slim
 
 COPY requirements.txt /tmp
-RUN pip install -r /tmp/requirements.txt
+RUN pip install --upgrade pip
+RUN pip install uv
+RUN uv pip install --system -r /tmp/requirements.txt
 
 ENV TZ=Asia/Seoul
 RUN apt-get update && \
       apt-get install -y gcc libc-dev vim && \
       rm -rf /var/lib/apt/lists/*
 
-RUN pip install apache-airflow
+RUN uv pip install --system apache-airflow
 ENV AIRFLOW_HOME=/opt/airflow
 ENV AIRFLOW__CORE__LOAD_EXAMPLES=False
 RUN mkdir -p $AIRFLOW_HOME
 WORKDIR $AIRFLOW_HOME
 
+COPY scripts /opt/scripts
 COPY airflow/dags /opt/airflow/dags
 COPY data /opt/data
 COPY .env /opt/.env
@@ -31,6 +34,6 @@ ENV PYTHONPATH="/opt"
 CMD ["/opt/airflow.start.sh"]
 
 # 주석: 도커 실행 명령어
-# docker build -t mlops-data-airflow-image -f .\mlops_team\Dockerfile.airflow .
+# docker build -t mlops-data-airflow-image -f .\mlops_team\Dockerfile.airflow .\mlops_team\
 # docker run -p 8181:8181 --name mlops-data-airflow mlops-data-airflow-image
 # airflow dags reserialize

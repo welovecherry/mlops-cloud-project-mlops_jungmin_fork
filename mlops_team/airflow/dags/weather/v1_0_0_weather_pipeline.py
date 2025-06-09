@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.wearher.v1_0_0.preprocess import WeatherPreprocess
 from data.wearher.v1_0_0.ingest_raw_wearher import collect_weather_data_with_time
+from scripts.pipeline import main as run_model_train
 
 def get_execution_time(**context):
     """실행 시간을 가져오는 함수"""
@@ -52,6 +53,12 @@ preprocess_data = PythonOperator(
     dag=dag,
 )
 
+model_train = PythonOperator(
+    task_id='model_train',
+    python_callable=run_model_train,
+    provide_context=True,
+    dag=dag,
+)
 
 # Task 의존성 정의
-collect_weather_data >> preprocess_data 
+model_train >> collect_weather_data >> preprocess_data 

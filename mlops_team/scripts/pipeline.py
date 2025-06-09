@@ -1,9 +1,9 @@
 import torch
 import argparse
 import logging
-from preprocess import Feature_Engineering
-from train import LSTM_Model, TempDataset, LSTMTrainer
-from inference import predict, save_predict
+from .preprocess import Feature_Engineering
+from .train import LSTM_Model, TempDataset, LSTMTrainer
+from .inference import predict, save_predict
 from torch.utils.data import DataLoader
 
 # 로깅 설정
