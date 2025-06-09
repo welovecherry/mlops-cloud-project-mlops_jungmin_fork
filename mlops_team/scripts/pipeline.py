@@ -1,100 +1,83 @@
-import os
-import sys
+import torch
+import argparse
 import logging
-from datetime import datetime
-from Preprocessing import Feature_Engineering
-from train_model import Tree_Models
-from dotenv import load_dotenv
+from preprocess import Feature_Engineering
+from train import LSTM_Model, TempDataset, LSTMTrainer
+from inference import predict, save_predict
+from torch.utils.data import DataLoader
 
 # 로깅 설정
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f'pipeline_{datetime.now().strftime("%Y%m%d_%H%M%S")}.log'),
-        logging.StreamHandler()
-    ]
-)
+    format='[%(asctime)s] %(message)s',
+    datefmt='%H:%M:%S',
+    force=True)
 logger = logging.getLogger(__name__)
 
-load_dotenv(dotenv_path="/mlops_team/.env")
-
-class Pipeline:
-    def __init__(self):
-        self.fe = Feature_Engineering()
-        self.processed_data_path = None
-        
-    def preprocess(self):
-        """전처리 단계 실행"""
-        try:
-            logger.info("Starting preprocessing pipeline...")
-            
-            # 데이터 로드 및 전처리
-            df = self.fe.load_data_from_s3(None, None, None)
-            df = self.fe.missing_value()
-            df = self.fe.feature_selection('Temperature')
-            df = self.fe.add_season_feature()
-            df = self.fe.encoding()
-            df = self.fe.target_temp()
-            
-            # 전처리된 데이터 저장
-            self.processed_data_path = self.fe.save_to_s3(df, version='v1.0.0')
-            logger.info(f"Preprocessing completed. Data saved at: {self.processed_data_path}")
-            
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error during preprocessing: {str(e)}")
-            raise
-            
-    def train(self):
-        """학습 단계 실행"""
-        try:
-            if not self.processed_data_path:
-                raise ValueError("No preprocessed data path found.")
-                
-            logger.info("Starting model training...")
-            
-            # 모델 학습 및 평가
-            tree_models = Tree_Models(self.processed_data_path)
-            tree_models.training_times = tree_models.train_models()
-            results = tree_models.evaluate_models()
-            
-            # Top 3 모델 출력
-            top_models = tree_models.get_top_models(3)
-            logger.info("\nTop 3 Models Selected:")
-            for i, model in enumerate(top_models, 1):
-                logger.info(f"{i}. {model}")
-                
-            logger.info("Model training completed successfully.")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error during model training: {str(e)}")
-            raise
-            
-    def run(self):
-        """전체 파이프라인 실행"""
-        try:
-            # 1. 전처리
-            if not self.preprocess():
-                return False
-                
-            # 2. 학습
-            if not self.train():
-                return False
-                
-            logger.info("Pipeline execution completed successfully.")
-            return True
-            
-        except Exception as e:
-            logger.error(f"Error during pipeline execution: {str(e)}")
-            return False
 
 def main():
-    pipeline = Pipeline()
-    success = pipeline.run()
-    sys.exit(0 if success else 1)
+    HORIZON = 168
+    SEQ_LEN = 336
+    total_steps = 12
+    step = 1
+
+    logger.info(f"[{step}/{total_steps}] Start Pipeline..."); step += 1
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--start_year", type=int, default=None, help="데이터 수집 시작 연도")
+    parser.add_argument("--epochs", type=int, default=15, help="학습 epoch 수")
+    parser.add_argument("--batch_size", type=int, default=32, help="배치 사이즈")
+    parser.add_argument("--lr", type=float, default=0.001, help="학습률")
+    parser.add_argument("--hidden_size", type=int, default=128, help="LSTM hidden size")
+    parser.add_argument("--num_layers", type=int, default=2, help="LSTM layer 수")
+    parser.add_argument("--dropout", type=float, default=0.3, help="Dropout rate")
+    parser.add_argument("--patience", type=int, default=5, help="조기 종료 기준 에폭 수")
+    args = parser.parse_args()
+
+    # Preprocessing
+    fe = Feature_Engineering()
+    logger.info(f"[{step}/{total_steps}] Loading Data from S3..."); step += 1
+    df = fe.load_data(start_year=args.start_year)
+    logger.info(f"[{step}/{total_steps}] S3 loading complete. Loaded {df.shape[0]} rows, {df.shape[1]} columns."); step += 1
+
+    logger.info(f"[{step}/{total_steps}] Start Data Preprocessing..."); step += 1
+    df = fe.missing_value()
+    df = fe.impossible_negative()
+    df = fe.feature_selection(target_col='Temperature')
+    df = fe.add_feature()
+
+    logger.info(f"[{step}/{total_steps}] Start Feature Engineering..."); step += 1
+    train_df, val_df, latest_df = fe.split_data(HORIZON=HORIZON, SEQ_LEN=SEQ_LEN)
+    fe.save_split_data(train_df, val_df, latest_df) # S3 Save
+    train, val, latest = fe.scaler(train_df, val_df, latest_df)
+    train, val, latest = fe.encoding(train, val, latest)
+    logger.info(f"[{step}/{total_steps}] Data Preprocessing complete."); step += 1
+
+    # DataLoader
+    logger.info(f"[{step}/{total_steps}] Creating Data Loaders..."); step += 1
+    train_dataset = TempDataset(train, label_col='Temperature', horizon=HORIZON, seq_len=SEQ_LEN)
+    val_dataset = TempDataset(val, label_col='Temperature', horizon=HORIZON, seq_len=SEQ_LEN)
+
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
+    logger.info(f"[{step}/{total_steps}] Data Loaders Ready."); step += 1
+
+    # Model Training
+    logger.info(f"[{step}/{total_steps}] Start Model Training..."); step += 1
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    input_size = train.shape[1] - 1
+    model = LSTM_Model(input_size=input_size, hidden_size=args.hidden_size,
+                       num_layers=args.num_layers, output_size=HORIZON, dropout=args.dropout)
+    
+    trainer = LSTMTrainer(model, device, lr=args.lr, input_size=input_size)
+    trainer.train(train_loader, val_loader, epochs=args.epochs, batch_size=args.batch_size, patience=args.patience)
+    logger.info(f"[{step}/{total_steps}] Model Training complete."); step += 1
+
+    # Inference
+    logger.info(f"[{step}/{total_steps}] Running Inference..."); step += 1
+    latest_input = latest.drop(columns=['Temperature']).values
+    pred_df = predict(trainer.model, device, latest_input, horizon=HORIZON)
+    save_path = save_predict(pred_df)
+    logger.info(f"[{step}/{total_steps}] Inference complete. Predictions saved to: {save_path}"); step += 1
 
 if __name__ == "__main__":
-    main() 
+    main()
