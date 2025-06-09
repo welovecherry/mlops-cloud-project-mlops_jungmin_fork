@@ -107,7 +107,7 @@
 #           docker stop weather-api-test
 #           docker rm weather-api-test
 
-
+# 나중에 스모크 테스트 추가하자...
 # GitHub Actions를 사용하여 CI/CD 파이프라인 구축
 name: CI/CD for Weather App
 
