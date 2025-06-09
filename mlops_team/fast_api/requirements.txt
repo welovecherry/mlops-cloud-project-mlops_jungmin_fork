@@ -1,6 +1,0 @@
-# fastapi 전용 패키지들
-
-fastapi
-uvicorn[standard]
-pandas
-scikit-learn
