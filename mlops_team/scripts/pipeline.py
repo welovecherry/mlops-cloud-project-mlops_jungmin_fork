@@ -47,9 +47,9 @@ def main():
 
     logger.info(f"[{step}/{total_steps}] Start Feature Engineering..."); step += 1
     train_df, val_df, latest_df = fe.split_data(HORIZON=HORIZON, SEQ_LEN=SEQ_LEN)
-    fe.save_split_data(train_df, val_df, latest_df) # S3 Save
     train, val, latest = fe.scaler(train_df, val_df, latest_df)
     train, val, latest = fe.encoding(train, val, latest)
+    fe.save_split_data(train_df, val_df, latest_df) # S3 Save
     logger.info(f"[{step}/{total_steps}] Data Preprocessing complete."); step += 1
 
     # DataLoader

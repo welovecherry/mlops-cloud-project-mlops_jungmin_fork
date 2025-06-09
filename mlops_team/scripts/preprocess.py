@@ -142,6 +142,9 @@ class Feature_Engineering:
             'Evening' if 18 <= x < 22 else
             'Night')
         
+        # Day (0=Monday ~ 6=Sunday)
+        self.df['day_of_week'] = pd.to_datetime(self.df[['year', 'month', 'day']]).dt.dayofweek
+
         # Hour (0-23)
         max_hour = 23
         self.df['hour_sin'] = np.sin(2 * np.pi * self.df['hour'] / (max_hour + 1))
@@ -156,6 +159,11 @@ class Feature_Engineering:
         max_day = 31
         self.df['day_sin'] = np.sin(2 * np.pi * (self.df['day'] - 1) / max_day)
         self.df['day_cos'] = np.cos(2 * np.pi * (self.df['day'] - 1) / max_day)
+
+        # Day-Week
+        self.df['dow_sin'] = np.sin(2 * np.pi * self.df['day_of_week'] / 7)
+        self.df['dow_cos'] = np.cos(2 * np.pi * self.df['day_of_week'] / 7)
+
         return self.df 
     
 
