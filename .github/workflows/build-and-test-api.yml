@@ -113,7 +113,7 @@ name: CI/CD for Weather App
 
 on:
   push:
-    branches: [ "main" ] # main 브랜치에 푸시될 때만 실행
+    branches: [ "main", "cicd" ] 
 
 jobs:
   # 1단계: 빌드 및 푸시 (CI)
