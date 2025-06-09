@@ -1,0 +1,16 @@
+# FastAPI & Uvicorn
+fastapi
+uvicorn[standard]
+
+# Streamlit App
+streamlit
+pandas
+plotly
+
+# AWS S3 Connection
+boto3
+s3fs
+pyarrow
+
+# .env file
+python-dotenv
