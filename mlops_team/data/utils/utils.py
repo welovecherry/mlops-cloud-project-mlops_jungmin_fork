@@ -57,3 +57,4 @@ def get_naver_weather():
     '토':'Saturday',
     '일':'Sunday',}
     df['day_of_week'] = df['day_of_week'].map(to_english)
+    return df
