@@ -4,6 +4,10 @@ import plotly.express as px
 import plotly.graph_objects as go
 from datetime import datetime
 import numpy as np
+import boto3
+from botocore.exceptions import NoCredentialsError
+import os
+from dotenv import load_dotenv
 
 # 페이지 설정
 st.set_page_config(
@@ -62,7 +66,8 @@ st.markdown("""
         box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
     }
     .tip-box {
-        background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+        # background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 1.5rem;
         border-radius: 12px;
         margin: 1rem 0;
@@ -93,43 +98,71 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# 데이터 로드 함수
-@st.cache_data
-def load_data():
-    try:
-        df = pd.read_csv("mlops_team/test/weather_inference_sample.csv")
-        df['datetime'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
-        df['date'] = df['datetime'].dt.date
-        return df
-    except FileNotFoundError:
-        # 샘플 데이터 생성 (혹시 파일이 없을 경우 대비용)
-        sample_data = {
-            'year': [2025]*24*7,
-            'month': [6]*24*7,
-            'day': [5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-                   6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,
-                   7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,7,
-                   8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,8,
-                   9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,9,
-                   10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10,
-                   11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11,11],
-            'hour': list(range(24))*7,
-            'day_of_week': ['Thursday']*24 + ['Friday']*24 + ['Saturday']*24 + ['Sunday']*24 + ['Monday']*24 + ['Tuesday']*24 + ['Wednesday']*24,
-            'pred_Temperature': [17.0, 16.6, 16.4, 16.4, 16.7, 16.9, 17.2, 18.5, 20.1, 22.3, 24.5, 26.2, 27.8, 28.1, 27.9, 26.8, 25.2, 23.7, 21.9, 20.3, 19.1, 18.2, 17.6, 17.2] +
-                               [16.8, 16.3, 16.1, 16.2, 16.5, 16.8, 17.5, 19.2, 21.4, 23.8, 25.9, 27.5, 28.9, 29.2, 28.8, 27.3, 25.8, 24.1, 22.6, 21.0, 19.8, 18.9, 18.1, 17.4] +
-                               [17.1, 16.7, 16.5, 16.6, 16.9, 17.3, 18.0, 19.8, 22.0, 24.5, 26.8, 28.3, 29.7, 30.1, 29.6, 28.0, 26.4, 24.7, 23.2, 21.5, 20.2, 19.3, 18.5, 17.8] +
-                               [17.5, 17.0, 16.8, 16.9, 17.2, 17.6, 18.4, 20.3, 22.7, 25.2, 27.4, 28.9, 30.2, 30.5, 30.0, 28.5, 26.9, 25.1, 23.5, 21.8, 20.5, 19.6, 18.8, 18.1] +
-                               [17.8, 17.3, 17.1, 17.2, 17.5, 17.9, 18.7, 20.6, 23.1, 25.6, 27.9, 29.4, 30.8, 31.1, 30.6, 29.0, 27.4, 25.6, 23.9, 22.2, 20.9, 19.9, 19.1, 18.4] +
-                               [18.1, 17.6, 17.4, 17.5, 17.8, 18.2, 19.0, 20.9, 23.4, 25.9, 28.2, 29.7, 31.1, 31.4, 30.9, 29.3, 27.7, 25.9, 24.2, 22.5, 21.2, 20.2, 19.4, 18.7] +
-                               [18.4, 17.9, 17.7, 17.8, 18.1, 18.5, 19.3, 21.2, 23.7, 26.2, 28.5, 30.0, 31.4, 31.7, 31.2, 29.6, 28.0, 26.2, 24.5, 22.8, 21.5, 20.5, 19.7, 19.0]
-        }
-        df = pd.DataFrame(sample_data)
-        df['datetime'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
-        df['date'] = df['datetime'].dt.date
-        st.warning("샘플 데이터를 사용하고 있습니다. 실제 CSV 파일을 확인해주세요.")
-        return df
+# .env 파일에서 환경 변수 로드
+load_dotenv(dotenv_path="mlops_team/.env")
 
-# 1. 스타일별 추천 데이터를 모두 정리 (활동 추천 팁 추가)
+# S3에서 최신 예측 데이터를 로드하는 함수
+@st.cache_data(ttl=600) # 10분 주기는 그대로 두되, 수동 버튼을 추가할 것
+def load_data_from_s3():
+    # .env 파일에서 AWS 정보 불러오기
+    aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+    bucket_name = os.getenv("S3_BUCKET_NAME", "mlops-prj")
+    
+    PREFIX = "data/weather/inference/"
+
+    # 키 값이 제대로 로드 되었는지 확인
+    if not all([aws_access_key_id, aws_secret_access_key, bucket_name]):
+        st.error(".env 파일에 AWS 관련 환경변수가 설정되지 않았습니다.")
+        st.stop()
+
+    try:
+        s3_client = boto3.client(
+            's3',
+            aws_access_key_id=aws_access_key_id,
+            aws_secret_access_key=aws_secret_access_key,
+        )
+
+        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=PREFIX)
+        if 'Contents' not in response:
+            st.error(f"S3 버킷 '{bucket_name}'의 '{PREFIX}' 폴더에 파일이 없습니다.")
+            st.stop()
+
+        parquet_files = [obj for obj in response['Contents'] if obj['Key'].endswith('.parquet')]
+        if not parquet_files:
+            st.error("S3 폴더에 Parquet 파일이 없습니다.")
+            st.stop()
+
+        latest_file = max(parquet_files, key=lambda obj: obj['LastModified'])
+        latest_file_key = latest_file['Key']
+        
+        # 앱 실행시 한 번만 표시되도록 세션 상태 활용
+        if 's3_message_shown' not in st.session_state:
+            st.info(f"✅ S3에서 최신 데이터 '{latest_file_key.split('/')[-1]}'를 불러왔습니다.")
+            st.session_state.s3_message_shown = True
+
+        s3_path = f"s3://{bucket_name}/{latest_file_key}"
+        df = pd.read_parquet(s3_path, storage_options={
+            "key": aws_access_key_id,
+            "secret": aws_secret_access_key,
+        })
+        
+        df['datetime'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
+        df['date'] = df['datetime'].dt.date
+        
+        # 필수 컬럼 존재 여부 최종 확인
+        if 'pred_Temperature' not in df.columns or 'datetime' not in df.columns:
+            st.error("처리된 데이터에 필수 컬럼('datetime', 'pred_Temperature')이 없습니다.")
+            st.stop()
+
+        return df.sort_values(by='datetime').reset_index(drop=True)
+
+    except Exception as e:
+        st.error(f"데이터 로딩 중 에러 발생: {e}")
+        st.stop()
+
+
+# 스타일별 추천 데이터를 모두 정리 (활동 추천 팁 추가)
 STYLE_RECOMMENDATIONS = {
     "5도 이하": {
         "items": {
@@ -212,10 +245,14 @@ def main():
     """, unsafe_allow_html=True)
     
     # 데이터 로드
-    df = load_data()
+    df = load_data_from_s3()
     
     # 사이드바 - 날짜 선택 및 설정
     st.sidebar.header("⚙️ 설정")
+
+    if st.sidebar.button("🔄 데이터 새로고침"):
+        st.cache_data.clear()  
+        st.rerun()  # 데이터 새로고침 버튼 클릭 시 캐시를 지우고 앱을 다시 실행
     
     # 날짜 선택
     st.sidebar.subheader("📅 날짜 선택")
@@ -362,7 +399,7 @@ def main():
 
     style_recommendations, activity_tip = get_recommendations_by_style(avg_temp) 
 
-    # 2. 사이드바에서 선택한 스타일 종류들을 탭의 이름으로 사용
+    # 2. 스타일 종류들을 탭의 이름으로 사용
     style_options = ["캐주얼", "비즈니스", "스포티", "페미닌", "미니멀"]
     tabs = st.tabs([f"👕 {s}" for s in style_options])
     
@@ -400,19 +437,9 @@ def main():
         layering_tip = "🌡️ 일교차가 큰 편이니 얇은 겉옷을 준비하세요."
     
     if layering_tip:
-        st.markdown("---")
         st.markdown(f"""
-        <div class="tip-box">
-            <strong>💡 레이어링 팁</strong><br>
-            {layering_tip}
-        </div>
-        """, unsafe_allow_html=True)
-    
-    # 팁 섹션
-    if layering_tip:
-        st.markdown(f"""
-        <div class="tip-box">
-            <strong>💡 레이어링 팁</strong><br>
+        <div class="tip-box" style="font-size: 20px;">
+            <strong style="font-size: 25px;">💡 레이어링 팁</strong><br>
             {layering_tip}
         </div>
         """, unsafe_allow_html=True)
@@ -420,7 +447,7 @@ def main():
     if activity_tip:
         st.markdown(f"""
         <div class="activity-tip" style="font-size: 20px;">
-            <strong style="font-size: 30px;">🎯 활동 추천</strong><br>
+            <strong style="font-size: 25px;">🎯 활동 추천</strong><br>
             {activity_tip}
         </div>
         """, unsafe_allow_html=True)
