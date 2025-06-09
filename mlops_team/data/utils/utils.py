@@ -6,6 +6,7 @@ import requests
 import numpy as np
 import json
 import re
+import pandas as pd
 
 def init_seed():
     np.random.seed(0)
@@ -43,13 +44,16 @@ def get_naver_weather():
     match = re.search(pattern, req.text, re.DOTALL)
     json_str = match.group(1)
     forecast_list = json.loads(json_str)
-    df = pd.DataFrame(forecast_list)
-
-    korean_keys = [
-    "지역코드", "시도", "시군구", "읍면동", "예보일", "예보일시",
-    "오전날씨코드", "오전날씨", "오전강수확률",
-    "오후날씨코드", "오후날씨", "오후강수확률",
-    "최저기온", "최고기온", "예보갱신시간", "요일"
-    ]
-    df.columns = korean_keys
-    return df
+    df = pd.DataFrame(forecast_list)[['aplYmd','maxTmpr','minTmpr','dayString']]
+    date = pd.DataFrame([{"year":i.year,'month':i.month,'day':i.day} for i in pd.to_datetime(df['aplYmd'], format='%Y%m%d')])
+    df = pd.concat([date,df],axis=1)
+    df.drop(columns=['aplYmd'],inplace=True)
+    df.rename(columns={'maxTmpr':'max_temp','minTmpr':'min_temp','dayString':'day_of_week'},inplace=True)
+    to_english = {'월':'Monday',
+    '화':'Tuesday',
+    '수':'Wednesday',
+    '목':'Thursday',
+    '금':'Friday',
+    '토':'Saturday',
+    '일':'Sunday',}
+    df['day_of_week'] = df['day_of_week'].map(to_english)
