@@ -1,38 +1,38 @@
-version: '3.8'
+# version: '3.8'
 
-services:
-  airflow:
-    build:
-      context: .
-      dockerfile: Dockerfile.airflow
-    container_name: airflow
-    ports:
-      - "8181:8181"
-    volumes:
-      - ./airflow.start.sh:/airflow.start.sh
-    command: ["bash", "/airflow.start.sh"]
-    depends_on:
-      - mlflow
+# services:
+#   airflow:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.airflow
+#     container_name: airflow
+#     ports:
+#       - "8181:8181"
+#     volumes:
+#       - ./airflow.start.sh:/airflow.start.sh
+#     command: ["bash", "/airflow.start.sh"]
+#     depends_on:
+#       - mlflow
 
-  mlflow:
-    build:
-      context: .
-      dockerfile: Dockerfile.mlflow
-    container_name: mlflow
-    ports:
-      - "5001:5000"
-    volumes:
-      - ./mlflow.start.sh:/mlflow.start.sh
-      - ./mlflow:/mlflow
-    command: ["bash", "/mlflow.start.sh"]
+#   mlflow:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.mlflow
+#     container_name: mlflow
+#     ports:
+#       - "5001:5000"
+#     volumes:
+#       - ./mlflow.start.sh:/mlflow.start.sh
+#       - ./mlflow:/mlflow
+#     command: ["bash", "/mlflow.start.sh"]
 
-  fastapi:
-    build:
-      context: .
-      dockerfile: Dockerfile.fastapi
-    container_name: fastapi
-    ports:
-      - "8000:8000"
+#   fastapi:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile.fastapi
+#     container_name: fastapi
+#     ports:
+#       - "8000:8000"
 
 
-# docker-compose -f .\mlops_team\docker-compose.yml up --build
+# # docker-compose -f .\mlops_team\docker-compose.yml up --build
