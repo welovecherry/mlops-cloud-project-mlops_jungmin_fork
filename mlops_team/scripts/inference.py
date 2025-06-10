@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 
 # 예측
-def predict(model, device, latest_seq, horizon=168):
+def predict(model, device, latest_seq, latest_time, horizon=168):
     model.eval()
     with torch.no_grad():
         inp = torch.tensor(latest_seq, dtype=torch.float32).unsqueeze(0).to(device)  # [1, seq_len, input_size]
@@ -14,8 +14,15 @@ def predict(model, device, latest_seq, horizon=168):
         preds = output.cpu().numpy().flatten()
 
     # 예측 시점 생성
-    now = datetime.now()
-    future_times = [now + timedelta(hours=i+1) for i in range(horizon)]
+    last_row = latest_time.iloc[-1]
+    last_time = datetime(
+        year=int(last_row["year"]),
+        month=int(last_row["month"]),
+        day=int(last_row["day"]),
+        hour=int(last_row["hour"])
+    )
+    future_times = [last_time + timedelta(hours=i + 1) for i in range(horizon)]
+
     df = pd.DataFrame({
         'year': [t.year for t in future_times],
         'month': [t.month for t in future_times],

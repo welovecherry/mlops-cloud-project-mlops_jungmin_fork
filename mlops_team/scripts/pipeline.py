@@ -1,10 +1,16 @@
 import torch
 import argparse
 import logging
+
 from .preprocess import Feature_Engineering
 from .train import LSTM_Model, TempDataset, LSTMTrainer
 from .inference import predict, save_predict
+
 from torch.utils.data import DataLoader
+from train import seed_everything
+
+# 시드 고정
+seed_everything(42)
 
 # 로깅 설정
 logging.basicConfig(
@@ -18,14 +24,15 @@ logger = logging.getLogger(__name__)
 def main(**args):
     HORIZON = 168
     SEQ_LEN = 336
-    total_steps = 12
+    total_steps = 13
     step = 1
 
     logger.info(f"[{step}/{total_steps}] Start Pipeline..."); step += 1
+
     start_year = args.get('start_year', None)
-    epochs = args.get('epochs', 15)
+    epochs = args.get('epochs', 20)
     batch_size = args.get('batch_size', 32)
-    lr = args.get('lr', 0.001)
+    lr = args.get('lr', 0.0005)
     hidden_size = args.get('hidden_size', 128)
     num_layers = args.get('num_layers', 2)
     dropout = args.get('dropout', 0.3)
@@ -45,10 +52,11 @@ def main(**args):
 
     logger.info(f"[{step}/{total_steps}] Start Feature Engineering..."); step += 1
     train_df, val_df, latest_df = fe.split_data(HORIZON=HORIZON, SEQ_LEN=SEQ_LEN)
-    fe.save_split_data(train_df, val_df, latest_df) # S3 Save
     train, val, latest = fe.scaler(train_df, val_df, latest_df)
-    train, val, latest = fe.encoding(train, val, latest)
+    train, val, latest, latest_time = fe.encoding(train, val, latest)
     logger.info(f"[{step}/{total_steps}] Data Preprocessing complete."); step += 1
+    fe.save_split_data(train, val, latest) # S3 Save
+    logger.info(f"[{step}/{total_steps}] Total Features: {train.shape[1]} | Split Datasets Saved to S3"); step += 1
 
     # DataLoader
     logger.info(f"[{step}/{total_steps}] Creating Data Loaders..."); step += 1
@@ -66,14 +74,16 @@ def main(**args):
     model = LSTM_Model(input_size=input_size, hidden_size=hidden_size,
                        num_layers=num_layers, output_size=HORIZON, dropout=dropout)
     
+
     trainer = LSTMTrainer(model, device, lr=lr, input_size=input_size)
     trainer.train(train_loader, val_loader, epochs=epochs, batch_size=batch_size, patience=patience)
+
     logger.info(f"[{step}/{total_steps}] Model Training complete."); step += 1
 
     # Inference
     logger.info(f"[{step}/{total_steps}] Running Inference..."); step += 1
-    latest_input = latest.drop(columns=['Temperature']).values
-    pred_df = predict(trainer.model, device, latest_input, horizon=HORIZON)
+    latest_seq = latest.drop(columns=['Temperature']).values[-SEQ_LEN:].astype(np.float32)
+    pred_df = predict(trainer.model, device, latest_seq, latest_time, horizon=HORIZON)
     save_path = save_predict(pred_df)
     logger.info(f"[{step}/{total_steps}] Inference complete. Predictions saved to: {save_path}"); step += 1
 

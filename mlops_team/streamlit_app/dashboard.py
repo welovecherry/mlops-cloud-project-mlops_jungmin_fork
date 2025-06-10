@@ -107,10 +107,25 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Streamlit 전용 데이터 로더: 캐싱과 UI 에러 처리를 담당
-# 600초(10분)동안 캐시 유지함. 하지만 refresh 버튼을 누르면 캐시를 지우고 새로고침함.
-@st.cache_data(ttl=600)
-def get_data_for_app():
+# .env 파일에서 환경 변수 로드
+# load_dotenv(dotenv_path="mlops_team/.env")
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
+
+# S3에서 최신 예측 데이터를 로드하는 함수
+@st.cache_data(ttl=600) # 10분 주기는 그대로 두되, 수동 버튼을 추가할 것
+def load_data_from_s3():
+    # .env 파일에서 AWS 정보 불러오기
+    aws_access_key_id = os.getenv("AWS_ACCESS_KEY_ID")
+    aws_secret_access_key = os.getenv("AWS_SECRET_ACCESS_KEY")
+    bucket_name = os.getenv("S3_BUCKET_NAME", "mlops-prj")
+    
+    PREFIX = "data/weather/inference/"
+
+    # 키 값이 제대로 로드 되었는지 확인
+    if not all([aws_access_key_id, aws_secret_access_key, bucket_name]):
+        st.error(".env 파일에 AWS 관련 환경변수가 설정되지 않았습니다.")
+        st.stop()
+
     try:
         df = load_latest_forecast_from_s3()
         # latest_date = df['datetime'].max().strftime('%Y-%m-%d %H:%M')
@@ -260,26 +275,30 @@ def main():
         
         # 그래프 레이아웃 설정
         fig.update_layout(
-            xaxis_title="시간 (시)",
-            yaxis_title=f"온도 ({temp_unit})",
             hovermode='x unified',
             plot_bgcolor='rgba(240,242,246,0.5)',
             paper_bgcolor='white',
-            font=dict(size=15, color='black'), # 검정색으로 바꿈
+            font=dict(size=15, color='black'),  # 전체 폰트 설정
             height=400,
             margin=dict(l=50, r=50, t=50, b=50),
             xaxis=dict(
                 dtick=5,
                 gridcolor='rgba(200,200,200,0.5)',
                 range=[-0.5, 23.5],
-                color='black',  
-                title_font=dict(color='black'), 
-                tickfont=dict(color='black')  
+                color='black',
+                title=dict(  # x축 타이틀 수정
+                    text="시간 (시)",
+                    font=dict(color='black')
+                ),
+                tickfont=dict(color='black')
             ),
             yaxis=dict(
                 gridcolor='rgba(200,200,200,0.5)',
-                color ='black',
-                title_font=dict(color='black'),
+                color='black',
+                title=dict(  # y축 타이틀 수정
+                    text=f"온도 ({temp_unit})",
+                    font=dict(color='black')
+                ),
                 tickfont=dict(color='black')
             )
         )
@@ -373,4 +392,4 @@ def main():
         st.dataframe(detail_df, hide_index=True, use_container_width=True, height=300)
 
 if __name__ == "__main__":
-    main()
+    main()  

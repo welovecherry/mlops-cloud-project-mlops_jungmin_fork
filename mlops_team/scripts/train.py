@@ -6,9 +6,26 @@ import s3fs
 import mlflow
 import mlflow.pytorch
 import getpass
+import random
+import os
 from datetime import datetime
 from torch.utils.data import Dataset, DataLoader
 from sklearn.metrics import mean_squared_error
+
+
+# 시드 고정 함수
+def seed_everything(seed=42):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+# 시드 고정 호출
+seed_everything(42)
 
 class TempDataset(Dataset):
     def __init__(self, df, label_col, horizon, seq_len):
@@ -44,12 +61,12 @@ class LSTMTrainer:
         self.model = model.to(device)
         self.device = device
         self.criterion = nn.MSELoss()
-        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.model.parameters(), lr=lr, weight_decay=1e-4)
         self.train_losses = []
         self.val_losses = []
         self.input_size = input_size
 
-    def train(self, train_loader, val_loader, epochs, batch_size, patience=5):
+    def train(self, train_loader, val_loader, epochs, batch_size, start_year, patience=5):
         best_val_loss = float('inf')
         best_rmse = None
         best_train_loss = None
@@ -63,6 +80,7 @@ class LSTMTrainer:
         run_name = f"LSTM_{timestamp}"
 
         with mlflow.start_run(run_name=run_name): # 학습 전부터 run 시작
+            mlflow.log_param("start_year", start_year)
 
             for epoch in range(1, epochs + 1):
                 self.model.train()
@@ -92,10 +110,8 @@ class LSTMTrainer:
                 val_loss /= len(val_loader)
                 mse = mean_squared_error(all_labels, all_preds)
                 rmse = np.sqrt(mse)
-
                 self.train_losses.append(train_loss)
                 self.val_losses.append(val_loss)
-
                 print(f"[Epoch {epoch}] Train Loss: {train_loss:.4f} | Val Loss: {val_loss:.4f} | RMSE: {rmse:.4f}")
 
                 # epoch별 로그 기록
