@@ -23,5 +23,4 @@ COPY mlops_team/common ./common
 
 
 # 최종 실행 명령어
-# app.start.sh 스크립트를 실행해서 FastAPI와 Streamlit 서버를 동시에 켠다.
 CMD ["bash", "app.start.sh"]
