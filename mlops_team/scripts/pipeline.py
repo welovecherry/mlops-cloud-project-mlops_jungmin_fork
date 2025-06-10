@@ -7,8 +7,8 @@ from .train import LSTM_Model, TempDataset, LSTMTrainer
 from .inference import predict, save_predict
 
 from torch.utils.data import DataLoader
-from train import seed_everything
-
+from .train import seed_everything
+import numpy as np
 # 시드 고정
 seed_everything(42)
 
@@ -76,7 +76,7 @@ def main(**args):
     
 
     trainer = LSTMTrainer(model, device, lr=lr, input_size=input_size)
-    trainer.train(train_loader, val_loader, epochs=epochs, batch_size=batch_size, patience=patience)
+    trainer.train(train_loader, val_loader, start_year=start_year,epochs=epochs, batch_size=batch_size, patience=patience)
 
     logger.info(f"[{step}/{total_steps}] Model Training complete."); step += 1
 

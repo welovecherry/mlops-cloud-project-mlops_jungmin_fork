@@ -58,8 +58,8 @@ model_train = PythonOperator(
     python_callable=run_model_train,
     provide_context=True,
     op_kwargs={
-        'start_year': 2024,
-        'epochs':2,
+        'start_year': 2020,
+        'epochs':15,
     },
     dag=dag,
 )
