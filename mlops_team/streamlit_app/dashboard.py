@@ -99,7 +99,8 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # .env 파일에서 환경 변수 로드
-load_dotenv(dotenv_path="mlops_team/.env")
+# load_dotenv(dotenv_path="mlops_team/.env")
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '..', '.env'))
 
 # S3에서 최신 예측 데이터를 로드하는 함수
 @st.cache_data(ttl=600) # 10분 주기는 그대로 두되, 수동 버튼을 추가할 것
@@ -370,26 +371,30 @@ def main():
         
         # 그래프 레이아웃 설정
         fig.update_layout(
-            xaxis_title="시간 (시)",
-            yaxis_title=f"온도 ({temp_unit})",
             hovermode='x unified',
             plot_bgcolor='rgba(240,242,246,0.5)',
             paper_bgcolor='white',
-            font=dict(size=15, color='black'), # 검정색으로 바꿈
+            font=dict(size=15, color='black'),  # 전체 폰트 설정
             height=400,
             margin=dict(l=50, r=50, t=50, b=50),
             xaxis=dict(
                 dtick=5,
                 gridcolor='rgba(200,200,200,0.5)',
                 range=[-0.5, 23.5],
-                color='black',  
-                titlefont=dict(color='black'), 
-                tickfont=dict(color='black')  
+                color='black',
+                title=dict(  # x축 타이틀 수정
+                    text="시간 (시)",
+                    font=dict(color='black')
+                ),
+                tickfont=dict(color='black')
             ),
             yaxis=dict(
                 gridcolor='rgba(200,200,200,0.5)',
-                color ='black',
-                titlefont=dict(color='black'),
+                color='black',
+                title=dict(  # y축 타이틀 수정
+                    text=f"온도 ({temp_unit})",
+                    font=dict(color='black')
+                ),
                 tickfont=dict(color='black')
             )
         )
@@ -482,4 +487,4 @@ def main():
         st.dataframe(detail_df, hide_index=True, use_container_width=True, height=300)
 
 if __name__ == "__main__":
-    main()
+    main()  

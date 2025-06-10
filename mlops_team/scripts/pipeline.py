@@ -1,10 +1,15 @@
 import torch
 import argparse
 import logging
+import numpy as np
 from preprocess import Feature_Engineering
 from train import LSTM_Model, TempDataset, LSTMTrainer
 from inference import predict, save_predict
 from torch.utils.data import DataLoader
+from train import seed_everything
+
+# 시드 고정
+seed_everything(42)
 
 # 로깅 설정
 logging.basicConfig(
@@ -18,15 +23,15 @@ logger = logging.getLogger(__name__)
 def main():
     HORIZON = 168
     SEQ_LEN = 336
-    total_steps = 12
+    total_steps = 13
     step = 1
 
     logger.info(f"[{step}/{total_steps}] Start Pipeline..."); step += 1
     parser = argparse.ArgumentParser()
     parser.add_argument("--start_year", type=int, default=None, help="데이터 수집 시작 연도")
-    parser.add_argument("--epochs", type=int, default=15, help="학습 epoch 수")
+    parser.add_argument("--epochs", type=int, default=20, help="학습 epoch 수")
     parser.add_argument("--batch_size", type=int, default=32, help="배치 사이즈")
-    parser.add_argument("--lr", type=float, default=0.001, help="학습률")
+    parser.add_argument("--lr", type=float, default=0.0005, help="학습률")
     parser.add_argument("--hidden_size", type=int, default=128, help="LSTM hidden size")
     parser.add_argument("--num_layers", type=int, default=2, help="LSTM layer 수")
     parser.add_argument("--dropout", type=float, default=0.3, help="Dropout rate")
@@ -48,9 +53,10 @@ def main():
     logger.info(f"[{step}/{total_steps}] Start Feature Engineering..."); step += 1
     train_df, val_df, latest_df = fe.split_data(HORIZON=HORIZON, SEQ_LEN=SEQ_LEN)
     train, val, latest = fe.scaler(train_df, val_df, latest_df)
-    train, val, latest = fe.encoding(train, val, latest)
-    fe.save_split_data(train_df, val_df, latest_df) # S3 Save
+    train, val, latest, latest_time = fe.encoding(train, val, latest)
     logger.info(f"[{step}/{total_steps}] Data Preprocessing complete."); step += 1
+    fe.save_split_data(train, val, latest) # S3 Save
+    logger.info(f"[{step}/{total_steps}] Total Features: {train.shape[1]} | Split Datasets Saved to S3"); step += 1
 
     # DataLoader
     logger.info(f"[{step}/{total_steps}] Creating Data Loaders..."); step += 1
@@ -69,15 +75,18 @@ def main():
                        num_layers=args.num_layers, output_size=HORIZON, dropout=args.dropout)
     
     trainer = LSTMTrainer(model, device, lr=args.lr, input_size=input_size)
-    trainer.train(train_loader, val_loader, epochs=args.epochs, batch_size=args.batch_size, patience=args.patience)
+    trainer.train(train_loader, val_loader, epochs=args.epochs, batch_size=args.batch_size, patience=args.patience, start_year=args.start_year)
     logger.info(f"[{step}/{total_steps}] Model Training complete."); step += 1
 
     # Inference
     logger.info(f"[{step}/{total_steps}] Running Inference..."); step += 1
-    latest_input = latest.drop(columns=['Temperature']).values
-    pred_df = predict(trainer.model, device, latest_input, horizon=HORIZON)
+    latest_seq = latest.drop(columns=['Temperature']).values[-SEQ_LEN:].astype(np.float32)
+    pred_df = predict(trainer.model, device, latest_seq, latest_time, horizon=HORIZON)
     save_path = save_predict(pred_df)
     logger.info(f"[{step}/{total_steps}] Inference complete. Predictions saved to: {save_path}"); step += 1
 
 if __name__ == "__main__":
     main()
+
+
+    
