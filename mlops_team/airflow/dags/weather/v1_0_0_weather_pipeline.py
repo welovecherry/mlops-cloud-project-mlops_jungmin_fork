@@ -8,6 +8,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from data.wearher.v1_0_0.preprocess import WeatherPreprocess
 from data.wearher.v1_0_0.ingest_raw_wearher import collect_weather_data_with_time
+from scripts.pipeline import main as run_model_train
 
 def get_execution_time(**context):
     """실행 시간을 가져오는 함수"""
@@ -27,10 +28,10 @@ default_args = {
 dag = DAG(
     dag_id='wearher_data_pipeline',
     default_args=default_args,
-    description='등록 후 최초 1회 실행 + 이후 1시간 간격 자동 실행',
-    schedule_interval='0 * * * *',  # 매 시간 정각
-    start_date=days_ago(0),         # 지금부터 시작
-    catchup=False,                  # 과거는 실행 안 함
+    description='등록 후 최초 1회 실행 + 이후 매일 새벽 2시 자동 실행',
+    schedule_interval='0 2 * * *',  # 매일 새벽 2시
+    start_date=days_ago(0),
+    catchup=False,
     max_active_runs=1,
     tags=['weather', 'mlops'],
 )
@@ -52,6 +53,16 @@ preprocess_data = PythonOperator(
     dag=dag,
 )
 
+model_train = PythonOperator(
+    task_id='model_train',
+    python_callable=run_model_train,
+    provide_context=True,
+    op_kwargs={
+        'start_year': 2024,
+        'epochs':2,
+    },
+    dag=dag,
+)
 
 # Task 의존성 정의
-collect_weather_data >> preprocess_data 
+collect_weather_data >> preprocess_data >> model_train

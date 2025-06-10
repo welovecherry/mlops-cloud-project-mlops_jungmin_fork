@@ -20,19 +20,20 @@ services:
       dockerfile: Dockerfile.mlflow
     container_name: mlflow
     ports:
-      - "5001:5000"
+      - "5001:5001"
     volumes:
       - ./mlflow.start.sh:/mlflow.start.sh
-      - ./mlflow:/mlflow
+      - ../mlflow_server:/mlflow
     command: ["bash", "/mlflow.start.sh"]
 
-  fastapi:
-    build:
-      context: .
-      dockerfile: Dockerfile.fastapi
-    container_name: fastapi
-    ports:
-      - "8000:8000"
+  # fastapi:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile.fastapi
+  #   container_name: fastapi
+  #   ports:
+  #     - "8000:8000"
 
 
-# docker-compose -f .\mlops_team\docker-compose.yml up --build
+# docker-compose -f .\mlops_team\docker-compose.yml build
+# docker-compose -f .\mlops_team\docker-compose.yml up

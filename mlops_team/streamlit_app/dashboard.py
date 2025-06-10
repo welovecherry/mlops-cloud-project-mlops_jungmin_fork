@@ -8,6 +8,15 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 import os
 from dotenv import load_dotenv
+import sys # 추가
+
+# 현재 파일(dashboard.py)의 디렉토리(streamlit_app)에서 한 단계 위(mlops_team)의 경로를 가져옴
+project_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+# 파이썬이 모듈을 찾는 경로 목록에 이 프로젝트 경로를 추가
+sys.path.append(project_path)
+from common.s3_loader import load_latest_forecast_from_s3  # S3에서 최신 예측 데이터를 로드하는 함수
+from common.recommender import generate_recommendations # 새로 만든 추천 함수 import
+
 
 # 페이지 설정
 st.set_page_config(
@@ -118,121 +127,16 @@ def load_data_from_s3():
         st.stop()
 
     try:
-        s3_client = boto3.client(
-            's3',
-            aws_access_key_id=aws_access_key_id,
-            aws_secret_access_key=aws_secret_access_key,
-        )
-
-        response = s3_client.list_objects_v2(Bucket=bucket_name, Prefix=PREFIX)
-        if 'Contents' not in response:
-            st.error(f"S3 버킷 '{bucket_name}'의 '{PREFIX}' 폴더에 파일이 없습니다.")
-            st.stop()
-
-        parquet_files = [obj for obj in response['Contents'] if obj['Key'].endswith('.parquet')]
-        if not parquet_files:
-            st.error("S3 폴더에 Parquet 파일이 없습니다.")
-            st.stop()
-
-        latest_file = max(parquet_files, key=lambda obj: obj['LastModified'])
-        latest_file_key = latest_file['Key']
-        
-        # 앱 실행시 한 번만 표시되도록 세션 상태 활용
-        if 's3_message_shown' not in st.session_state:
-            st.info(f"✅ S3에서 최신 데이터 '{latest_file_key.split('/')[-1]}'를 불러왔습니다.")
-            st.session_state.s3_message_shown = True
-
-        s3_path = f"s3://{bucket_name}/{latest_file_key}"
-        df = pd.read_parquet(s3_path, storage_options={
-            "key": aws_access_key_id,
-            "secret": aws_secret_access_key,
-        })
-        
-        df['datetime'] = pd.to_datetime(df[['year', 'month', 'day', 'hour']])
-        df['date'] = df['datetime'].dt.date
-        
-        # 필수 컬럼 존재 여부 최종 확인
-        if 'pred_Temperature' not in df.columns or 'datetime' not in df.columns:
-            st.error("처리된 데이터에 필수 컬럼('datetime', 'pred_Temperature')이 없습니다.")
-            st.stop()
-
-        return df.sort_values(by='datetime').reset_index(drop=True)
-
+        df = load_latest_forecast_from_s3()
+        # latest_date = df['datetime'].max().strftime('%Y-%m-%d %H:%M')
+        # st.success(f"✅ S3에서 최신 데이터를 성공적으로 불러왔습니다. (예측 기준 시점: {latest_date})")
+        latest_date = df['datetime'].max().strftime('%Y-%m-%d %H:%M')
+        now_str = datetime.now().strftime('%Y-%m-%d %H:%M')
+        st.success(f"✅ 데이터 동기화 완료! (가져온 시각: {now_str}  / 최종 예측 시점: {latest_date})")
+        return df
     except Exception as e:
-        st.error(f"데이터 로딩 중 에러 발생: {e}")
+        st.error(f"데이터 로딩에 실패했습니다: {e}")
         st.stop()
-
-
-# 스타일별 추천 데이터를 모두 정리 (활동 추천 팁 추가)
-STYLE_RECOMMENDATIONS = {
-    "5도 이하": {
-        "items": {
-            "캐주얼": {"아우터": ["🧥 롱패딩", "🧥 숏패딩"], "상의": ["🧶 두꺼운 니트", "👕 기모 맨투맨"], "하의": ["👖 기모 바지", "👖 코듀로이 팬츠"]},
-            "비즈니스": {"아우터": ["🧥 두꺼운 오버핏 코트"], "상의": ["🧶 터틀넥 니트", "👔 셔츠"], "하의": ["👖 울 슬랙스"]},
-            "스포티": {"아우터": ["🧥 벤치파카", "🧥 윈드브레이커"], "상의": ["👕 기능성 긴팔", "👕 후드티"], "하의": ["👖 트레이닝 팬츠"]},
-            "페미닌": {"아우터": ["🧥 알파카 코트"], "상의": ["🧶 앙고라 니트"], "하의": ["👗 롱 기장 스커트", "🧦 두꺼운 스타킹"]},
-            "미니멀": {"아우터": ["🧥 블랙 패딩"], "상의": ["👕 기본 터틀넥"], "하의": ["👖 와이드 슬랙스"]},
-        },
-        "activity_tip": "실내 활동을 추천해요. 외출 시에는 목도리, 장갑 등 방한용품을 꼭 챙기세요!"
-    },
-    "10도 이하": {
-        "items": {
-            "캐주얼": {"아우터": ["🧥 경량패딩", "🧥 야상"], "상의": ["👕 맨투맨", "👕 후드티"], "하의": ["👖 청바지", "👖 면바지"]},
-            "비즈니스": {"아우터": ["🧥 트렌치 코트", "🧥 울 자켓"], "상의": ["👔 셔츠", "🧶 얇은 니트"], "하의": ["👖 슬랙스"]},
-            "스포티": {"아우터": ["🧥 플리스 자켓"], "상의": ["👕 긴팔 티셔츠"], "하의": ["👖 조거 팬츠"]},
-            "페미닌": {"아우터": ["🧥 트위드 자켓"], "상의": ["👚 블라우스", "🧶 가디건"], "하의": ["👗 미디 스커트"]},
-            "미니멀": {"아우터": ["🧥 바람막이"], "상의": ["👕 기본 긴팔티"], "하의": ["👖 블랙진"]},
-        },
-        "activity_tip": "따뜻한 차 한 잔과 함께 공원을 산책하거나, 예쁜 카페에 가기 좋은 날씨예요."
-    },
-    "20도 이하": {
-        "items": {
-            "캐주얼": {"아우터": ["🧥 가디건", "🧥 청자켓"], "상의": ["👕 셔츠", "👕 긴팔티"], "하의": ["👖 면바지", "👖 청바지"]},
-            "비즈니스": {"아우터": ["🧥 얇은 자켓", "🧥 블레이저"], "상의": ["👔 셔츠"], "하의": ["👖 슬랙스", "👗 원피스"]},
-            "스포티": {"아우터": ["🧥 바람막이"], "상의": ["👕 PK 티셔츠"], "하의": ["👖 반바지", "👖 레깅스"]},
-            "페미닌": {"아우터": ["🧥 가디건"], "상의": ["👚 블라우스", "👗 얇은 원피스"], "하의": ["👗 롱스커트"]},
-            "미니멀": {"아우터": ["🧥 얇은 바람막이"], "상의": ["👕 U넥 티셔츠"], "하의": ["👖 청바지"]},
-        },
-        "activity_tip": "야외 활동하기 완벽한 날씨! 자전거를 타거나 가까운 곳으로 피크닉을 떠나보세요."
-    },
-    "28도 이하": {
-        "items": {
-            "캐주얼": {"상의": ["👕 반팔 티셔츠"], "하의": ["👖 반바지", "👖 린넨 바지"]},
-            "비즈니스": {"상의": ["👔 린넨 셔츠", "👕 PK 셔츠"], "하의": ["👖 린넨 슬랙스"]},
-            "스포티": {"상의": ["👕 기능성 반팔"], "하의": ["🩳 스포츠 반바지"]},
-            "페미닌": {"상의": ["👚 퍼프 소매 블라우스"], "하의": ["👗 롱 원피스", "👗 숏츠"]},
-            "미니멀": {"상의": ["👕 기본 반팔티"], "하의": ["👖 와이드 숏츠"]},
-        },
-        "activity_tip": "외출하기 좋은 날씨! 친구들과 만나거나 가벼운 산책을 즐겨보세요."
-    },
-    "28도 초과": {
-        "items": {
-            "캐주얼": {"상의": ["🎽 민소매", "👕 얇은 반팔"], "하의": ["🩳 짧은 반바지"]},
-            "비즈니스": {"상의": ["👔 반팔 셔츠"], "하의": ["👖 쿨맥스 슬랙스"]},
-            "스포티": {"상의": ["🎽 기능성 민소매"], "하의": ["🩳 러닝 숏츠"]},
-            "페미닌": {"상의": ["👗 끈 원피스"], "하의": ["🩳 린넨 숏츠"]},
-            "미니멀": {"상의": ["🎽 슬리브리스 탑"], "하의": ["👖 3부 팬츠"]},
-        },
-        "activity_tip": "너무 더워요! 수분 섭취는 필수! 시원한 실내에서 영화나 전시를 보는 건 어때요?"
-    }
-}
-
-def get_recommendations_by_style(avg_temp):
-    temp_range_data = None
-    if avg_temp <= 5:
-        temp_range_data = STYLE_RECOMMENDATIONS["5도 이하"]
-    elif avg_temp <= 10:
-        temp_range_data = STYLE_RECOMMENDATIONS["10도 이하"]
-    elif avg_temp <= 20:
-        temp_range_data = STYLE_RECOMMENDATIONS["20도 이하"]
-    elif avg_temp <= 28:
-        temp_range_data = STYLE_RECOMMENDATIONS["28도 이하"]
-    else:
-        temp_range_data = STYLE_RECOMMENDATIONS["28도 초과"]
-    
-    # 옷 추천 데이터와 활동 팁을 각각 반환
-    return temp_range_data['items'], temp_range_data['activity_tip']
-
 
 
 # 메인 앱
@@ -246,8 +150,8 @@ def main():
     """, unsafe_allow_html=True)
     
     # 데이터 로드
-    df = load_data_from_s3()
-    
+    df = get_data_for_app()  # S3에서 데이터 로드
+
     # 사이드바 - 날짜 선택 및 설정
     st.sidebar.header("⚙️ 설정")
 
@@ -402,7 +306,8 @@ def main():
         st.plotly_chart(fig, use_container_width=True)
     
 
-    style_recommendations, activity_tip = get_recommendations_by_style(avg_temp) 
+    # style_recommendations, activity_tip = get_recommendations_by_style(avg_temp) 
+    style_recommendations, activity_tip, layering_tip = generate_recommendations(avg_temp, temp_diff)
 
     # 2. 스타일 종류들을 탭의 이름으로 사용
     style_options = ["캐주얼", "비즈니스", "스포티", "페미닌", "미니멀"]
