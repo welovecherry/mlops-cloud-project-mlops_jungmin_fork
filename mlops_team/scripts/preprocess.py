@@ -52,13 +52,7 @@ class Feature_Engineering:
 
         df_list = [pd.read_parquet(file, filesystem=self.s3) for file in all_files]
         self.df = pd.concat(df_list, ignore_index=True)
-        
-        # Data Type Error 방지
-        astype_cols = ['year', 'month', 'day', 'hour']
-        for col in astype_cols:
-            if self.df[col].dtype == 'object' or self.df[col].dtype.name == 'category':
-                self.df[col] = self.df[col].astype(int)
-        return self.df.sort_values(by=['year', 'month', 'day', 'hour'])
+        return self.df
 
 
     def missing_value(self):
@@ -80,8 +74,7 @@ class Feature_Engineering:
             if col in self.df.columns:
                 self.df[col] = self.df[col].apply(lambda x: 0 if x < 0 else x)
         return self.df
-
-
+    
     def spearman_test(self, target_col):
         df_num = self.df.select_dtypes(include=['number'])
         features, correlations, p_values = [], [], []
@@ -120,7 +113,7 @@ class Feature_Engineering:
     def feature_selection(self, target_col):
         spearmanr_cols = self.spearman_test(target_col)
         kruskal_cols = self.kruskal_test(target_col)
-        exclude_cols = ['WeatherCode', 'StationID', 'ObservationTime', 'CurrentWeatherCode', 'PastWeatherCode', 'GustTime']
+        exclude_cols = ['WeatherCode', 'StationID', 'ObservationTime', 'CurrentWeatherCode', 'PastWeatherCode']
         drop_cols = spearmanr_cols + kruskal_cols + exclude_cols
 
         # 실제 drop 시에도 시계열 + 타겟 변수 제외
@@ -149,25 +142,6 @@ class Feature_Engineering:
             'Evening' if 18 <= x < 22 else
             'Night')
         
-        # 전날 같은 시각 온도 변화량
-        self.df['prev_day_temp_diff'] = self.df['Temperature'].diff(24)
-        self.df['prev_day_temp_diff'] = self.df['prev_day_temp_diff'].fillna(method='bfill')  # 0보다 자연스러움
-
-        # 태양복사량 × 시각 (일사 영향)
-        self.df['temp_solar_effect'] = self.df['SolarRadiation'] * self.df['hour'].apply(lambda h: np.sin((np.pi / 24) * h))
-
-        # 지온 - 지표온도 차이
-        self.df['temp_soil_gap'] = self.df['SoilTemperature5cm'] - self.df['GroundTemperature']
-
-        # 증기압 대비 습도 비율
-        self.df['vapor_humidity_ratio'] = self.df['VaporPressure'] / (self.df['RelativeHumidity'] + 1e-3)
-
-        # 해면기압 - 지역기압 차이
-        self.df['pressure_diff'] = self.df['SeaLevelPressure'] - self.df['LocalPressure']
-
-        # Day (0=Monday ~ 6=Sunday)
-        self.df['day_of_week'] = pd.to_datetime(self.df[['year', 'month', 'day']]).dt.dayofweek
-
         # Hour (0-23)
         max_hour = 23
         self.df['hour_sin'] = np.sin(2 * np.pi * self.df['hour'] / (max_hour + 1))
@@ -182,15 +156,10 @@ class Feature_Engineering:
         max_day = 31
         self.df['day_sin'] = np.sin(2 * np.pi * (self.df['day'] - 1) / max_day)
         self.df['day_cos'] = np.cos(2 * np.pi * (self.df['day'] - 1) / max_day)
-
-        # Day-Week
-        self.df['dow_sin'] = np.sin(2 * np.pi * self.df['day_of_week'] / 7)
-        self.df['dow_cos'] = np.cos(2 * np.pi * self.df['day_of_week'] / 7)
-
         return self.df 
     
 
-    def split_data(self, HORIZON=168, SEQ_LEN=336):   
+    def split_data(self, HORIZON=168, SEQ_LEN=336):
         self.df = self.df.sort_values(by=['year', 'month', 'day', 'hour']).reset_index(drop=True)
         val_total_len = SEQ_LEN + HORIZON
         val_df = self.df.iloc[-val_total_len:].copy()
@@ -200,22 +169,15 @@ class Feature_Engineering:
 
 
     def scaler(self, train_df, val_df, latest_input):
-        train = train_df.copy()
-        val = val_df.copy()
-        latest = latest_input.copy()
+        train = train_df.copy().drop(columns=['year', 'month', 'day', 'hour'])
+        val   = val_df.copy().drop(columns=['year', 'month', 'day', 'hour'])
+        latest= latest_input.copy().drop(columns=['year', 'month', 'day', 'hour'])
+        num_cols = train.select_dtypes(include=['number']).drop(columns=['Temperature']).columns
 
-        # 스케일링에서 제외할 컬럼들
-        exclude_cols = ['Temperature', 'year', 'month', 'day', 'hour', 'month_sin', 'month_cos', 
-                        'day_sin', 'day_cos', 'hour_sin', 'hour_cos', 'dow_sin', 'dow_cos', 'day_of_week']
-
-        # 수치형 중 스케일링이 필요한 컬럼만 선택
-        num_cols = [col for col in train.select_dtypes(include=['number']).columns if col not in exclude_cols]
-
-        # RobustScaler 적용
         scaler = RobustScaler()
         train[num_cols] = scaler.fit_transform(train[num_cols])
         val[num_cols] = scaler.transform(val[num_cols])
-        latest[num_cols] = scaler.transform(latest[num_cols])
+        latest[num_cols] = scaler.transform(latest[num_cols]) 
         return train, val, latest
 
 
@@ -225,7 +187,8 @@ class Feature_Engineering:
         onehot_cols = []
 
         for col in str_cols:
-            if train[col].nunique() <= 10:
+            unique_vals = train[col].nunique()
+            if unique_vals <= 10:
                 onehot_cols.append(col)
             else:
                 label_cols.append(col)
@@ -264,19 +227,10 @@ class Feature_Engineering:
             latest = pd.concat([latest, latest_input_ohe], axis=1)
             self.onehot_encoders[col] = ohe
 
-        # 추론 시 넘기기 위해 시계열 보존
-        latest_time = latest[['year', 'month', 'day', 'hour']].copy() 
-
-        # 원본 시계열 제거
-        drop_cols = ['year', 'month', 'day']
-        train = train.drop(columns=drop_cols)
-        val = val.drop(columns=drop_cols)
-        latest = latest.drop(columns=drop_cols)
-
         # 컬럼 순서 통일
         val = val[train.columns]
         latest = latest[train.columns]
-        return train, val, latest, latest_time
+        return train, val, latest
     
 
     def save_split_data(self, train, val, latest):

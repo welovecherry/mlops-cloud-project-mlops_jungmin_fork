@@ -12,4 +12,3 @@ mlflow
 scipy
 tqdm
 torch
-boto3

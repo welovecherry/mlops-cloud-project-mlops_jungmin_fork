@@ -7,7 +7,7 @@ AIRFLOW_CONTAINER = airflow-container
 
 # ---------------- Weather App (FastAPI + Streamlit) ----------------
 # build:
-# 	@echo "🔨 Building Docker image: $(IMAGE_NAME)..."
+# 	@echo "Building Docker image: $(IMAGE_NAME)..."
 # 	docker build -t $(IMAGE_NAME) -f mlops_team/app/Dockerfile.app .
 
 build:

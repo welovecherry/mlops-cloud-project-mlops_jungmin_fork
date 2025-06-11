@@ -5,7 +5,7 @@ KMA_STATION_ID = 108
 KMA_API_URL = 'https://apihub.kma.go.kr/api/typ01/url/kma_sfctm3.php'
 
 # 데이터 처리 관련 상수
-LOOKBACK_DAYS = 15  # 피처 생성 시 참조할 과거 데이터 기간
+LOOKBACK_DAYS = 30  # 피처 생성 시 참조할 과거 데이터 기간
 
 # 날씨 데이터 컬럼
 WEATHER_COLUMNS = [
