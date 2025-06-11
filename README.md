@@ -1,82 +1,14 @@
-테스트트트ㅡㅌ# 프로젝트 이름
+🌦️ End-to-End MLOps Platform for Weather-Based Clothing RecommendationThis project implements a complete End-to-End MLOps pipeline that automates the entire lifecycle of a deep learning model, from data processing and training to serving predictions through both a user-facing dashboard and a developer-friendly API.[Project Demo GIF or Screenshot Here]📍 OverviewProject Goal: To build a robust, automated, and scalable MLOps system that transforms a deep learning model from a static file into a live, operational service.Live Demos:Streamlit UI: http://[YOUR_EC2_IP]:8501FastAPI Docs: http://[YOUR_EC2_IP]:8000/docsTech Stack:🏗️ ArchitectureThe system is designed with a modular and automated architecture, where each component seamlessly connects to form a complete MLOps lifecycle.[Architecture Diagram Here - Highly Recommended]✨ My Key ContributionsAs an MLOps Engineer and Backend Developer in this team project, I was responsible for designing and implementing the core infrastructure for model serving and automation.1. Prototyping & System Design:Initiated the project by developing a full end-to-end prototype in a single day (API Crawling -> Preprocessing -> ML Prediction -> FastAPI Serving). This provided the team with a clear architectural vision and accelerated the overall development process.2. Service Architecture & Modularization:Designed and implemented a modular architecture by creating a common directory.Centralized core logic, such as S3 data loading (s3_loader.py) and recommendation algorithms (recommender.py), to ensure code reusability and data consistency between the Streamlit UI and FastAPI, applying the DRY (Don't Repeat Yourself) principle.3. Model Serving System (Backend & Frontend):Backend (FastAPI): Developed two RESTful API endpoints (/forecast/latest, /recommendation/by_day) to serve raw prediction data and processed recommendations. Integrated auto-generating OpenAPI documentation (/docs) to enhance developer collaboration.Frontend (Streamlit): Built an interactive dashboard that consumes the common modules to visualize complex time-series predictions and provide actionable clothing recommendations to end-users.4. CI/CD Pipeline & Automation:Established a complete CI/CD pipeline using GitHub Actions.CI: Automated Docker image builds and pushes to Docker Hub upon every push to the main branch.CD: Automated deployment to an AWS EC2 instance via SSH, enabling zero-downtime updates by pulling the latest image and restarting the container.5. Development Environment & Productivity:Containerized the entire application using Docker (Dockerfile.app), ensuring a consistent and reproducible environment for all team members.Created a Makefile to abstract complex Docker commands into simple shortcuts (make build, make run, make clean), significantly improving the team's development workflow and productivity.1. 프로토타이핑 및 시스템 설계:프로젝트 초반, 하루 만에 전체 파이프라인의 프로토타입을 개발하여 팀에 명확한 아키텍처 비전을 제시하고 개발 속도를 가속화했습니다.2. 서비스 아키텍처 및 모듈화:common 디렉토리를 생성하여 모듈식 아키텍처를 설계하고 구현했습니다.S3 데이터 로딩 및 추천 알고리즘과 같은 핵심 로직을 중앙화하여 코드 재사용성을 높이고, DRY 원칙을 적용하여 Streamlit UI와 FastAPI 간의 데이터 정합성을 100% 보장했습니다.3. 모델 서빙 시스템 (백엔드 & 프론트엔드):백엔드 (FastAPI): 원본 예측 데이터와 가공된 추천 결과를 제공하는 2개의 RESTful API 엔드포인트를 개발하고, 자동 API 문서를 제공하여 협업 효율을 극대화했습니다.프론트엔드 (Streamlit): 공통 모듈을 활용하여 복잡한 시계열 예측 결과를 시각화하고, 사용자에게 실용적인 의류 추천을 제공하는 인터랙티브 대시보드를 구현했습니다.4. CI/CD 파이프라인 및 자동화:GitHub Actions를 사용해 main 브랜치 푸시 시 Docker 이미지 빌드부터 AWS EC2 서버 배포까지의 전 과정을 자동화하는 CI/CD 파이프라인을 구축했습니다.5. 개발 환경 및 생산성:Docker를 통해 전체 어플리케이션을 컨테이너화하여 팀원 모두에게 일관된 개발 환경을 제공했습니다.Makefile을 도입하여 복잡한 Docker 명령어들을 추상화하고, 팀 전체의 개발 워크플로우와 생산성을 향상시켰습니다.💡 Troubleshooting & Lessons LearnedThis section details key technical challenges encountered during the project and the systematic approach used to resolve them.Challenge & SymptomMy Troubleshooting Process & SolutionKey Takeaway1. CI/CD Deployment Failure (i/o timeout)Hypothesis: The network firewall was blocking the connection. Verification: I confirmed that local SSH access worked, isolating the issue to the GitHub Actions runner's environment. Action: I identified that the EC2 Security Group was configured to only allow my static IP. I updated the SSH inbound rule to Anywhere-IPv4 (0.0.0.0/0) to allow access from GitHub's dynamic IP addresses.A deep understanding of cloud networking (Security Groups, Firewalls) is crucial for building a successful CD pipeline. Security and accessibility must be balanced.2. Docker Build Failure (not found error)Hypothesis: The Docker build context was incorrect. Verification: I analyzed the GitHub Actions log and found that COPY commands were failing. Action: I realized the build context was set to the project root (.), but the Dockerfile COPY paths were relative to the app directory. I fixed this by prepending the correct relative paths (e.g., mlops_team/app/) to all COPY commands in the Dockerfile, ensuring the build is reproducible regardless of the execution path.The Docker build context and COPY command paths must be perfectly aligned. A well-structured Dockerfile is essential for reliable CI.3. FastAPI Serialization Error (numpy.float32)Hypothesis: FastAPI's JSON encoder could not handle a specific data type. Verification: The traceback clearly pointed to a ValueError related to numpy.float32. Action: I identified that Pandas aggregation functions (.mean(), .min(), etc.) return NumPy types, not native Python types. I resolved this by explicitly casting the values to native Python float() before returning the final JSON response.An API is not just a model wrapper; it's a data translation service. Understanding data serialization and type compatibility between libraries is key to building robust APIs.🛠️ How to RunAll processes can be easily executed using the Makefile.# 1. Build the Docker image
+# (Builds the image defined in mlops_team/app/Dockerfile.app)
+make build
 
-<br>
+# 2. Run the Docker container in the background
+# (Requires .env file in the mlops_team/ directory)
+make run
 
-## 💻 프로젝트 소개
-### <프로젝트 소개>
-- _이번 프로젝트에 대해 소개를 작성해주세요_
+# 3. View logs of the running container
+make logs
 
-### <작품 소개>
-- _만드신 작품에 대해 간단한 소개를 작성해주세요_
-
-<br>
-
-## 👨‍👩‍👦‍👦 팀 구성원
-
-| ![박패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![이패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![최패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![김패캠](https://avatars.githubusercontent.com/u/156163982?v=4) | ![오패캠](https://avatars.githubusercontent.com/u/156163982?v=4) |
-| :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: | :--------------------------------------------------------------: |
-|            [박패캠](https://github.com/UpstageAILab)             |            [이패캠](https://github.com/UpstageAILab)             |            [최패캠](https://github.com/UpstageAILab)             |            [김패캠](https://github.com/UpstageAILab)             |            [오패캠](https://github.com/UpstageAILab)             |
-|                            팀장, 담당 역할                             |                            담당 역할                             |                            담당 역할                             |                            담당 역할                             |                            담당 역할                             |
-
-<br>
-
-## 🔨 개발 환경 및 기술 스택
-- 주 언어 : _ex) python_
-- 버전 및 이슈관리 : _ex) github_
-- 협업 툴 : _ex) github, notion_
-
-<br>
-
-## 📁 프로젝트 구조
-```
-├── code
-│   ├── jupyter_notebooks
-│   │   └── model_train.ipynb
-│   └── train.py
-├── docs
-│   ├── pdf
-│   │   └── (Template) [패스트캠퍼스] Upstage AI Lab 1기_그룹 스터디 .pptx
-│   └── paper
-└── input
-    └── data
-        ├── eval
-        └── train
-```
-
-<br>
-
-## 💻​ 구현 기능
-### 기능1
-- _작품에 대한 주요 기능을 작성해주세요_
-### 기능2
-- _작품에 대한 주요 기능을 작성해주세요_
-### 기능3
-- _작품에 대한 주요 기능을 작성해주세요_
-
-<br>
-
-## 🛠️ 작품 아키텍처(필수X)
-- #### _아래 이미지는 예시입니다_
-![이미지 설명](https://miro.medium.com/v2/resize:fit:4800/format:webp/1*ub_u88a4MB5Uj-9Eb60VNA.jpeg)
-
-<br>
-
-## 🚨​ 트러블 슈팅
-### 1. OOO 에러 발견
-
-#### 설명
-- _프로젝트 진행 중 발생한 트러블에 대해 작성해주세요_
-
-#### 해결
-- _프로젝트 진행 중 발생한 트러블 해결방법 대해 작성해주세요_
-
-<br>
-
-## 📌 프로젝트 회고
-### 박패캠
-- _프로젝트 회고를 작성해주세요_
-
-<br>
-
-## 📰​ 참고자료
-- _참고자료를 첨부해주세요_
+# 4. Stop and remove the container
+make clean
+Access Streamlit UI: http://localhost:8501Access FastAPI Docs: http://localhost:8000/docs🚀 Future ImprovementsModel Monitoring: Implement a monitoring system (e.g., using Prometheus & Grafana) to track the performance of the deployed model in real-time and detect model drift.Automated Retraining Pipeline: Extend the MLOps pipeline to automatically retrain the model with new data on a schedule (e.g., using Airflow), validate its performance, and deploy it if it outperforms the current model.A/B Testing Framework: Introduce a system to serve multiple model versions simultaneously to different user segments, allowing for data-driven decisions on which model performs best in a live environment.
