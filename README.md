@@ -174,6 +174,7 @@ make clean
 - **A/B Testing:** Multi-version model serving for data-driven optimization
 
 ---
+<a name="korean"></a>
 
 # 🌦️ 날씨 기반 의류 추천 End-to-End MLOps 플랫폼
 
