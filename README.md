@@ -11,8 +11,9 @@
 ### 🎯 Project Overview
 
 A complete **End-to-End MLOps pipeline** that transforms a deep learning model from development to production, serving weather-based clothing recommendations through both web dashboard and REST API.
+<img width="608" alt="스크린샷 2025-06-12 오전 11 25 51" src="https://github.com/user-attachments/assets/918459d6-264d-4881-bb72-d25c3519884d" />
 
-*![스크린샷 2025-06-09 오후 12 14 26](https://github.com/user-attachments/assets/fe576b7d-2151-414b-9e0e-ebbde4747877)
+
 *
 
 **🔗 Live Demos:**
