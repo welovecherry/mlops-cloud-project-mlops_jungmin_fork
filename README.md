@@ -71,7 +71,7 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
   - Implemented **automatic OpenAPI documentation** generation at `/docs`
   - Solved all **JSON serialization challenges** (NumPy compatibility issues)
   
-<img width="1000" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
+<img width="533" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
 *📊 FastAPI Documentation Interface I built*
 
 - **My Frontend Work**: 
