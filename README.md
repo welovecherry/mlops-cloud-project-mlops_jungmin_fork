@@ -11,10 +11,9 @@
 ### 🎯 Project Overview
 
 A complete **End-to-End MLOps pipeline** that transforms a deep learning model from development to production, serving weather-based clothing recommendations through both web dashboard and REST API.
+
 <img width="608" alt="스크린샷 2025-06-12 오전 11 25 51" src="https://github.com/user-attachments/assets/918459d6-264d-4881-bb72-d25c3519884d" />
 
-
-*
 
 **🔗 Live Demos:**
 - **Streamlit Dashboard:** `http://[EC2_IP]:8501`
@@ -67,12 +66,13 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
 - **Code Quality**: Applied **DRY principle** throughout, making the codebase maintainable and scalable
 
 #### 3. **🌐 Complete API & Frontend Development**
+<img width="800" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
+
 - **My Backend Work**: 
   - Designed and coded **both RESTful endpoints** (`/forecast/latest`, `/recommendation/by_day`)
   - Implemented **automatic OpenAPI documentation** generation at `/docs`
   - Solved all **JSON serialization challenges** (NumPy compatibility issues)
   
-<img width="800" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
 *📊 FastAPI Documentation Interface I built*
 
 - **My Frontend Work**: 
@@ -131,6 +131,7 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
 
 > While waiting for the model training phase, I actively supported the team by mentoring and creating easy-to-follow tutorials for less experienced developers.  
 > This ensured **everyone in the team could experience as much of the MLOps process as possible**, enhancing collective learning and team synergy.
+> 
 <img width="533" alt="스크린샷 2025-06-12 오전 11 22 19" src="https://github.com/user-attachments/assets/439c377a-60fa-4a7b-9334-c8b517eb8fef" />
 
 ---
@@ -182,7 +183,8 @@ make clean
 
 딥러닝 모델을 개발부터 운영까지 **완전 자동화하는 End-to-End MLOps 파이프라인**으로, 날씨 기반 의류 추천 서비스를 웹 대시보드와 REST API로 제공합니다.
 
-*🎬 라이브 데모 스크린샷/GIF*
+<img width="608" alt="스크린샷 2025-06-12 오전 11 25 51" src="https://github.com/user-attachments/assets/918459d6-264d-4881-bb72-d25c3519884d" />
+
 
 **🔗 라이브 데모:**
 - **Streamlit 대시보드:** `http://[EC2_IP]:8501`
@@ -198,6 +200,8 @@ make clean
 | **도구 & 기타** | **Makefile**, **Git** | 복잡한 Docker 및 개발 명령어들을 표준화하고 단순화하는 **Makefile**을 작성하여 팀 생산성을 향상시켰습니다. **Git**을 통한 체계적인 버전 관리와 협업을 실천했습니다. |
 
 ### 🏗️ 시스템 아키텍처
+
+<img width="1100" alt="스크린샷 2025-06-12 오전 10 42 57" src="https://github.com/user-attachments/assets/041fd55f-1ae1-4015-89e0-261c624bb790" />
 
 확장성과 유지보수성을 보장하는 **모듈식 마이크로서비스 아키텍처**와 자동화된 CI/CD 파이프라인을 구축했습니다.
 
@@ -216,16 +220,22 @@ make clean
 - **DRY 원칙** 적용으로 코드 재사용성 최대화
 
 #### 3. **프로덕션 수준 API 개발**
+<img width="800" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
+
 - **백엔드 (FastAPI):** 2개 RESTful 엔드포인트 구축 (`/forecast/latest`, `/recommendation/by_day`)
 - **프론트엔드 (Streamlit):** 시계열 시각화가 포함된 인터랙티브 대시보드 개발
 - `/docs`에서 **자동 생성 API 문서** 제공으로 개발자 경험 향상
 
 #### 4. **완전한 CI/CD 파이프라인**
+<img width="800" alt="스크린샷 2025-06-12 오전 11 07 15" src="https://github.com/user-attachments/assets/badfdad2-570b-474e-9457-27d48553b6ef" />
+
 - **CI:** 모든 커밋에서 Docker 이미지 빌드 및 Docker Hub 푸시 자동화
 - **CD:** SSH 자동화를 통한 AWS EC2 무중단 배포
 - **결과:** 배포 시간을 수동 작업 몇 시간에서 자동화된 몇 분으로 단축
 
 #### 5. **개발 생산성 도구**
+<img width="800" alt="스크린샷 2025-06-12 오전 11 08 42" src="https://github.com/user-attachments/assets/d445aab3-b818-4340-a2ca-a676a2304f1c" />
+
 - 일관된 환경을 위한 전체 애플리케이션 **Docker 컨테이너화**
 - 간단한 명령어로 **Makefile 생성** (`make build`, `make run`, `make clean`)
 - 복잡한 Docker 작업을 추상화하여 **팀 생산성 향상**
@@ -261,6 +271,7 @@ make clean
 > 모델 학습 시간이 오래 걸리는 동안, 코딩에 익숙하지 않은 팀원들을 위해  
 > **튜토리얼을 제작하고 멘토링을 제공**하며 팀 전체가 MLOps 과정을 더 많이 경험하도록 도왔습니다.  
 > 이로써 팀의 **집단적 성장과 시너지**를 촉진했습니다.
+<img width="533" alt="스크린샷 2025-06-12 오전 11 22 19" src="https://github.com/user-attachments/assets/439c377a-60fa-4a7b-9334-c8b517eb8fef" />
 
 ---
 
