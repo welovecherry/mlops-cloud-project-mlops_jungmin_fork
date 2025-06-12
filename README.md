@@ -117,23 +117,12 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
 
 > **💪 These improvements are direct results of my individual work**
 
-- **🚀 Deployment Speed**: Reduced from **manual 2+ hours → automated 5 minutes** (96% improvement)
-- **🔄 Team Productivity**: Cut new developer onboarding from **4 hours → 45 minutes** (81% improvement) 
-- **📈 Code Quality**: Achieved **100% data consistency** between frontend and backend through my architecture
-- **🛡️ System Reliability**: Implemented **zero-downtime deployments** with automatic rollback capability
-- **⚡ Developer Experience**: Created **single-command deployment** (`make build && make run`)
-- **🔧 Infrastructure Automation**: **Eliminated all manual deployment steps** through my CI/CD pipeline
-
-### 📊 Measurable Results & Business Impact
-
-> **💪 These improvements are direct results of my individual work**
-
-- **🚀 Deployment Speed**: Reduced from **manual 2+ hours → automated 5 minutes** 
-- **🔄 Team Productivity**: Cut new developer onboarding from **4 hours → 45 minutes** 
-- **📈 Code Quality**: Achieved **100% data consistency** between frontend and backend through my architecture
-- **🛡️ System Reliability**: Implemented **zero-downtime deployments** with automatic rollback capability
-- **⚡ Developer Experience**: Created **single-command deployment** (`make build && make run`)
-- **🔧 Infrastructure Automation**: **Eliminated all manual deployment steps** through my CI/CD pipeline
+- ** Deployment Speed**: Reduced from **manual 2+ hours → automated 5 minutes** 
+- ** Team Productivity**: Cut new developer onboarding from **4 hours → 45 minutes** 
+- ** Code Quality**: Achieved **100% data consistency** between frontend and backend through my architecture
+- ** System Reliability**: Implemented **zero-downtime deployments** with automatic rollback capability
+- ** Developer Experience**: Created **single-command deployment** (`make build && make run`)
+- ** Infrastructure Automation**: **Eliminated all manual deployment steps** through my CI/CD pipeline
 
 ---
 
@@ -249,20 +238,19 @@ make clean
 
 ### 📊 성과 및 임팩트
 
-- **🚀 배포 속도:** 수동 배포 (2시간+) → 자동화 (5분)
-- **🔄 개발 사이클:** 새 팀원 설정 시간 80% 단축
-- **📈 코드 품질:** 프론트엔드-백엔드 간 100% 데이터 정합성 달성
-- **🛡️ 안정성:** 자동 롤백 기능을 갖춘 무중단 배포
+- ** 배포 속도:** 수동 배포 (2시간+) → 자동화 (5분)
+- ** 개발 사이클:** 새 팀원 설정 시간 80% 단축
+- ** 코드 품질:** 프론트엔드-백엔드 간 100% 데이터 정합성 달성
 
 ### 📊 측정 가능한 결과 및 비즈니스 임팩트
 
-> **💪 아래 성과는 모두 제가 단독으로 수행한 작업의 직접적인 결과입니다**
+> ** 아래 성과는 모두 제가 단독으로 수행한 작업의 직접적인 결과입니다**
 
-- **🚀 배포 속도 향상**: 수동 1시간+ → 자동화 5분
-- **🔄 팀 생산성 향상**: 새 개발자 온보딩 시간 4시간 → 45분
-- **📈 코드 품질 향상**: 프론트엔드와 백엔드 간 **100% 데이터 정합성** 확보
-- **⚡ 개발자 경험 향상**: `make build && make run` 만으로 배포되는 **원클릭 시스템** 구축
-- **🔧 인프라 자동화**: **수동 배포 작업 전면 제거**, 완전한 자동화 구현
+- ** 배포 속도 향상**: 수동 1시간+ → 자동화 5분
+- ** 팀 생산성 향상**: 새 개발자 온보딩 시간 4시간 → 45분
+- ** 코드 품질 향상**: 프론트엔드와 백엔드 간 **100% 데이터 정합성** 확보
+- ** 개발자 경험 향상**: `make build && make run` 만으로 배포되는 **원클릭 시스템** 구축
+- ** 인프라 자동화**: **수동 배포 작업 전면 제거**, 완전한 자동화 구현
 
 ---
 
