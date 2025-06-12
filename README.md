@@ -1,6 +1,6 @@
 # 🌦️ End-to-End MLOps Platform for Weather-Based Clothing Recommendation
 
-> **💡 Personal Contribution Focus**: This repository showcases my individual contributions as **MLOps Engineer & Backend Developer** in a team project. I was responsible for the entire infrastructure, deployment automation, and backend systems.
+> **💡 Personal Contribution Focus**: This repository showcases my individual contributions as **MLOps Engineer & Backend Developer** in a team project. I was responsible for the entire infrastructure, deployment automation, frontend, and backend systems.
 
 [English](#english) | [한국어](#korean)
 
@@ -10,7 +10,7 @@
 
 ### 🎯 Project Overview
 
-A complete **End-to-End MLOps pipeline** that transforms a deep learning model from development to production, serving weather-based clothing recommendations through both web dashboard and REST API.
+A complete End-to-End MLOps pipeline that transforms a deep learning model from development to production, serving weather-based clothing recommendations via a Streamlit web dashboard and REST API.
 
 <img width="900" alt="스크린샷 2025-06-12 오전 11 25 51" src="https://github.com/user-attachments/assets/918459d6-264d-4881-bb72-d25c3519884d" />
 
@@ -178,11 +178,11 @@ make clean
 
 # 🌦️ 날씨 기반 의류 추천 End-to-End MLOps 플랫폼
 
-> **💡 개인 기여도 중심**: 이 저장소는 팀 프로젝트에서 **MLOps 엔지니어 & 백엔드 개발자**로서 제가 개인적으로 기여한 부분들을 중심으로 정리했습니다. 전체 인프라, 배포 자동화, 백엔드 시스템을 담당했습니다.
+> **💡 개인 기여도 중심**: 이 저장소는 팀 프로젝트에서 **MLOps 엔지니어 & 백엔드 개발자**로서 제가 개인적으로 기여한 부분들을 중심으로 정리했습니다. 전체 인프라, 배포 자동화, 프론트엔드, 백엔드 시스템을 담당했습니다.
 
 ### 🎯 프로젝트 개요
 
-딥러닝 모델을 개발부터 운영까지 **완전 자동화하는 End-to-End MLOps 파이프라인**으로, 날씨 기반 의류 추천 서비스를 웹 대시보드와 REST API로 제공합니다.
+딥러닝 모델을 개발부터 운영까지 **완전 자동화하는 End-to-End MLOps 파이프라인**으로, 날씨 기반 의류 추천 서비스를 웹 대시보드와 REST API, Streamlit으로 제공합니다.
 
 <img width="900" alt="스크린샷 2025-06-12 오전 11 25 51" src="https://github.com/user-attachments/assets/918459d6-264d-4881-bb72-d25c3519884d" />
 
