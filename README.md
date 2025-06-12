@@ -72,7 +72,7 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
   - Implemented **automatic OpenAPI documentation** generation at `/docs`
   - Solved all **JSON serialization challenges** (NumPy compatibility issues)
   
-<img width="533" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
+<img width="800" alt="스크린샷 2025-06-12 오전 10 46 36" src="https://github.com/user-attachments/assets/4265a826-63e4-41a4-a7aa-835562ba8ea8" />
 *📊 FastAPI Documentation Interface I built*
 
 - **My Frontend Work**: 
@@ -81,7 +81,7 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
 
 #### 4. **🚀 End-to-End CI/CD Pipeline (100% My Work)**
 
-<img width="533" alt="스크린샷 2025-06-12 오전 11 07 15" src="https://github.com/user-attachments/assets/badfdad2-570b-474e-9457-27d48553b6ef" />
+<img width="800" alt="스크린샷 2025-06-12 오전 11 07 15" src="https://github.com/user-attachments/assets/badfdad2-570b-474e-9457-27d48553b6ef" />
 
 *⚙️ CI/CD Pipeline Execution Screenshot*
 
@@ -98,7 +98,7 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
 - **My Impact**: **Reduced team onboarding time by 80%** with simplified commands
 - **My Documentation**: Created comprehensive setup guides and troubleshooting docs
 
-<img width="533" alt="스크린샷 2025-06-12 오전 11 08 42" src="https://github.com/user-attachments/assets/d445aab3-b818-4340-a2ca-a676a2304f1c" />
+<img width="800" alt="스크린샷 2025-06-12 오전 11 08 42" src="https://github.com/user-attachments/assets/d445aab3-b818-4340-a2ca-a676a2304f1c" />
 
 *💻 Makefile Commands I Created*
 
