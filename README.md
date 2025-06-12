@@ -31,7 +31,7 @@ A complete **End-to-End MLOps pipeline** that transforms a deep learning model f
 
 ### 🏗️ System Architecture
 
-<img width="818" alt="스크린샷 2025-06-12 오전 10 42 57" src="https://github.com/user-attachments/assets/041fd55f-1ae1-4015-89e0-261c624bb790" />
+<img width="1100" alt="스크린샷 2025-06-12 오전 10 42 57" src="https://github.com/user-attachments/assets/041fd55f-1ae1-4015-89e0-261c624bb790" />
 
 **I designed and implemented** a **modular microservices architecture** with automated CI/CD pipeline, ensuring scalability and maintainability.
 
